@@ -1,0 +1,14 @@
+# Dependencias
+node_modules/
+dist/
+dist-ssr/
+
+# Entorno (¡VITAL IGNORAR EL ENV!)
+.env
+.env.local
+.env.*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

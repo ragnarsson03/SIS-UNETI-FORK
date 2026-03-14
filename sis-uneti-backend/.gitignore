@@ -1,0 +1,13 @@
+# Dependencias y compilados
+node_modules/
+dist/
+
+# Entorno y secretos
+.env
+.env.development
+.env.production
+*.pem
+
+# Logs
+logs/
+*.log
