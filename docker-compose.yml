@@ -1,24 +1,48 @@
 services:
-  # Base de Datos Soberana
+  # Infraestructura: Base de Datos Soberana
   db:
     image: postgres:18-alpine
     container_name: sis_uneti_db
-    restart: always
     environment:
       POSTGRES_DB: data_soberana
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-1234}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./database/data_soberana.sql:/docker-entrypoint-initdb.d/init.sql
 
-  # Mensajería para Microservicios
+  # Infraestructura: Mensajería Redis
   redis:
     image: redis:7-alpine
     container_name: sis_uneti_redis
     ports:
       - "6379:6379"
+
+  # Aplicación: Backend (NestJS)
+  backend:
+    build:
+      context: .
+      dockerfile: sis-uneti-backend/Dockerfile
+    container_name: sis_uneti_backend
+    depends_on:
+      - db
+      - redis
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./sis-uneti-backend/.env
+
+  # Aplicación: Frontend (React)
+  frontend:
+    build:
+      context: ./sis-uneti-frontend
+    container_name: sis_uneti_frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
 
 volumes:
   postgres_data:

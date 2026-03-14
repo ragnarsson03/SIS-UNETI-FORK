@@ -1,0 +1,8 @@
+#Ignorar archivos y carpetas
+
+node_modules
+dist
+.env
+.env.local
+.git
+README.md

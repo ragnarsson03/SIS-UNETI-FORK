@@ -4,7 +4,7 @@
 Este repositorio contiene el ecosistema digital del SIS-UNETI, estructurado bajo un modelo de **Monorepo** y arquitectura de microservicios.
 
 ## 🛠 Stack Tecnológico Oficial
-- **Frontend:** React 18, Vite, Tailwind CSS
+- **Frontend:** React 18, Vite 7.3, Tailwind CSS 4.2
 - **Backend:** Node.js 20.11 (LTS), NestJS 11
 - **Base de Datos:** PostgreSQL 18 + TypeORM
 - **Comunicación:** Redis (Mensajería entre microservicios)
@@ -13,7 +13,7 @@ Este repositorio contiene el ecosistema digital del SIS-UNETI, estructurado bajo
 ## 📁 Estructura del Proyecto
 - `/sis-uneti-frontend`: Interfaz de usuario (Célula 01/03).
 - `/sis-uneti-backend`: API Gateway y Microservicios (Célula 01/02/04).
-- `/docker`: Archivos de configuración de contenedores (Próximamente).
+- `/docker`: Archivos de configuración de contenedores.
 
 ## 🌲 GitFlow de Trabajo
 1. `main`: Rama de producción (Solo lectura para líderes).
@@ -23,4 +23,4 @@ Este repositorio contiene el ecosistema digital del SIS-UNETI, estructurado bajo
 ## ⚙️ Configuración Inicial
 1. Clonar el repositorio.
 2. Crear archivos `.env` basados en `.env.template` (No subir secretos).
-3. (Próximamente) Ejecutar `docker-compose up -d` para levantar servicios base (Postgres, Redis).
+3. Ejecutar `docker-compose up -d` para levantar servicios base (Postgres, Redis).
