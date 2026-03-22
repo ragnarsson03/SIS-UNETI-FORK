@@ -1,7 +1,5 @@
 # SIS-UNETI Frontend
 
-![SIS-UNETI Frontend Preview](./src/assets/screen.png)
-
 Este es el cliente web oficial del ecosistema SIS-UNETI, diseñado para ofrecer una interfaz administrativa y académica moderna, rápida y segura.
 
 <div align="center">
@@ -59,4 +57,4 @@ docker build -t sis-uneti-frontend -f frontend.dockerfile .
 - `src/components`: Componentes reutilizables de la UI.
 - `src/context`: Gestión del estado global de la aplicación.
 - `src/hooks`: Lógica de negocio extraída y reutilizable.
-- `src/services`: Capa de comunicación con el API Gateway.  
+- `src/services`: Capa de comunicación con el API Gateway.
