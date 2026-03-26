@@ -1,0 +1,5 @@
+{
+  "name": "SIS-UNETI - Sistema de Gestión Académica",
+  "description": "Módulo de autenticación y gestión académica de la Universidad Nacional Experimental de las Telecomunicaciones e Informática.",
+  "requestFramePermissions": []
+}

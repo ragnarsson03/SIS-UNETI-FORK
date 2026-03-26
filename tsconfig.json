@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    /* Configuración Base */
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+
+    /* Soporte para Decoradores (Crítico para tu error de Cédula) */
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "useDefineForClassFields": false,
+
+    /* Configuración de Proyecto */
+    "allowJs": true,
+    "noEmit": true, 
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    
+    /* Alias Globales */
+    "baseUrl": ".",
+    "paths": {
+      "@backend/*": ["sis-uneti-backend/src/*"],
+      "@frontend/*": ["sis-uneti-frontend/src/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist"]
+}
