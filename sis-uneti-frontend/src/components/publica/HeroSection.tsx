@@ -1,58 +1,88 @@
 import { Link } from 'react-router-dom';
+import { ShieldCheck, Database } from 'lucide-react';
+import campusHero from '../../assets/landing/Campus Hero.png';
 
 export default function HeroSection() {
   return (
-    <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
-      {/* Elementos Decorativos de Fondo */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-sky-400/10 rounded-full blur-[120px]"></div>
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-600/10 rounded-full blur-[100px]"></div>
-      </div>
+    <section className="relative pt-32 pb-16 lg:pt-44 lg:pb-32 bg-slate-50 overflow-hidden">
+      {/* Elementos decorativos sutiles basados en el mockup */}
+      <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 size-[500px] bg-primary/5 rounded-full blur-3xl -z-10"></div>
+      <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 size-[400px] bg-primary/10 rounded-full blur-3xl -z-10"></div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center">
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-slate-900 leading-[1.1] tracking-tight">
-            Universidad de la <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-600 to-blue-700">
-              Creatividad e Innovación
-            </span>
-          </h1>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           
-          <p className="mt-8 text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            Bienvenidos al Sistema Integral de Servicios (SIS-UNETI). 
-            La plataforma centralizada para la gestión académica y operativa de la 
-            nueva era digital universitaria.
-          </p>
+          {/* Columna Izquierda: Información Institucional */}
+          <div className="flex flex-col gap-6 lg:gap-8 z-10">
+            
+            {/* Tag institucional dinámico */}
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-extrabold uppercase tracking-[0.15em] w-fit">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+              </span>
+              Sistema Oficial de Gestión Académica
+            </div>
 
-          <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link 
-              to="/auth/login" 
-              className="w-full sm:w-auto px-10 py-4 bg-slate-900 text-white font-bold rounded-2xl shadow-2xl hover:bg-black transition-all hover:scale-105"
-            >
-              Ingresar al Portal
-            </Link>
-            <Link 
-              to="/consulta-externa" 
-              className="w-full sm:w-auto px-10 py-4 bg-white border border-slate-200 text-slate-600 font-bold rounded-2xl hover:bg-slate-50 transition-all"
-            >
-              Validar Documentos QR
-            </Link>
-          </div>
+            <div className="flex flex-col gap-5">
+              <h1 className="text-slate-900 text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.05] tracking-tight">
+                Bienvenido a <span className="text-primary">SIS-UNETI</span>
+              </h1>
+              <p className="text-slate-600 text-lg sm:text-xl font-medium leading-relaxed max-w-xl">
+                Centralizando la gestión académica con tecnología soberana para la comunidad 
+                de la Universidad Nacional Experimental de las Telecomunicaciones e Informática.
+              </p>
+            </div>
 
-          {/* Estadísticas / Counters Rápidos */}
-          <div className="mt-16 sm:mt-24 grid grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { label: 'Estudiantes Activos', count: '12K+' },
-              { label: 'Sedes Regionales', count: '08' },
-              { label: 'Programas PNF', count: '15+' },
-              { label: 'Alianzas Tecnológicas', count: '24' },
-            ].map((stat, idx) => (
-              <div key={idx} className="p-6 bg-white/50 border border-slate-100 rounded-3xl">
-                <div className="text-3xl font-black text-slate-900">{stat.count}</div>
-                <div className="mt-1 text-sm font-medium text-slate-500">{stat.label}</div>
+            {/* CTA's */}
+            <div className="flex flex-wrap gap-4 mt-2">
+              <Link 
+                to="/auth/login" 
+                className="flex items-center justify-center min-w-[200px] h-14 px-8 bg-primary text-white text-base font-bold rounded-xl transition-all shadow-xl shadow-primary/25 hover:bg-primary-dark hover:scale-105"
+              >
+                Acceder al Sistema
+              </Link>
+              <Link 
+                to="/consulta-externa" 
+                className="flex items-center justify-center min-w-[200px] h-14 px-8 bg-white border border-slate-200 text-slate-800 text-base font-bold rounded-xl transition-all hover:bg-slate-50 hover:border-slate-300"
+              >
+                Validación de Títulos QR
+              </Link>
+            </div>
+
+            {/* Certificaciones fijas en Hero */}
+            <div className="flex items-center gap-8 pt-6 border-t border-slate-200 max-w-md">
+              <div className="flex items-center gap-2.5">
+                <ShieldCheck className="text-primary size-5" />
+                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Protocolo Seguro SSL</span>
               </div>
-            ))}
+              <div className="flex items-center gap-2.5">
+                <Database className="text-primary size-5" />
+                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Infraestructura Propia</span>
+              </div>
+            </div>
           </div>
+
+          {/* Columna Derecha: Visualización del sistema */}
+          <div className="relative group lg:block hidden">
+            <div className="absolute -inset-1.5 bg-gradient-to-r from-primary/30 to-blue-500/20 rounded-2xl blur-xl opacity-30 group-hover:opacity-50 transition duration-1000"></div>
+            <div className="relative bg-white rounded-2xl overflow-hidden shadow-2xl border border-slate-200">
+              {/* Pantalla principal del campus */}
+              <img 
+                src={campusHero} 
+                alt="Prototipo SIS-UNETI" 
+                className="w-full aspect-[16/10] object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-8">
+                <div className="w-full">
+                  <p className="text-white text-sm font-bold italic opacity-90 mb-2 leading-relaxed">
+                    "Transformando la educación a través de la digitalización soberana."
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>

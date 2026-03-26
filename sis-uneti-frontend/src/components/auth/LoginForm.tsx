@@ -18,7 +18,6 @@ export default function LoginForm() {
     setError(null);
 
     try {
-      // Petición al API Gateway
       const response = await fetch('http://localhost:3000/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -28,18 +27,17 @@ export default function LoginForm() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Error de autenticación perimetral');
+        throw new Error(data.message || 'Credenciales incorrectas. Verifique e intente nuevamente.');
       }
 
       const userRole = (data.rol || 'ESTUDIANTE') as Role;
-      
+
       login({
         cedula: identifier,
         rol: userRole,
         token: data.token,
       });
 
-      // Redirección basada en Rol
       switch (userRole) {
         case 'ESTUDIANTE': navigate('/estudiante/dashboard'); break;
         case 'DOCENTE': navigate('/docente/dashboard'); break;
@@ -50,121 +48,144 @@ export default function LoginForm() {
       }
 
     } catch (err: any) {
-      setError(err.message || 'Fallo de conexión con el servidor.');
+      setError(err.message || 'Error de conexión con el servidor.');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="bg-white p-8 rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.08)] border border-slate-100 relative overflow-hidden">
-      {/* Aura decorativa */}
-      <div className="absolute -top-20 -right-20 w-40 h-40 bg-sky-200/20 rounded-full blur-3xl pointer-events-none"></div>
+    <div className="bg-white border border-slate-200 shadow-sm rounded-lg overflow-hidden">
 
-      <div className="relative z-10">
-        {/* Ícono + Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-slate-50 border border-slate-100 mb-4">
-            <span className="material-symbols-outlined text-[#0c0939] text-2xl">account_circle</span>
-          </div>
-          <h2 className="text-2xl font-black text-slate-900 tracking-tight font-['Plus_Jakarta_Sans']">
-            Acceso Institucional
-          </h2>
-          <p className="text-sm text-slate-500 mt-1">Bienvenido al sistema de gestión universitaria</p>
+      {/* Cabecera institucional */}
+      <div className="bg-[#003366] px-8 py-6 text-white">
+        <div className="flex items-center gap-3 mb-1">
+          <span className="material-symbols-outlined text-[22px] text-sky-300">lock</span>
+          <h1 className="text-base font-semibold tracking-wide">
+            Sistema de Control de Estudios
+          </h1>
         </div>
+        <p className="text-xs text-blue-200 pl-9">
+          UNETI — Autenticación de Usuario
+        </p>
+      </div>
 
+      {/* Cuerpo del formulario */}
+      <div className="px-8 py-7">
+
+        {/* Alerta de error */}
         {error && (
-          <div className="mb-6 p-3.5 bg-red-50 border border-red-100 text-red-600 rounded-xl flex items-center gap-2.5">
-            <span className="material-symbols-outlined text-lg flex-shrink-0">error</span>
-            <p className="text-sm font-semibold">{error}</p>
+          <div className="mb-5 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md flex items-start gap-2">
+            <span className="material-symbols-outlined text-base flex-shrink-0 mt-0.5">error</span>
+            <p className="text-sm">{error}</p>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Identifier */}
+
+          {/* Campo: Cédula de Identidad */}
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Cédula o Correo</label>
+            <label
+              htmlFor="identifier"
+              className="block text-xs font-semibold text-slate-600 uppercase tracking-wider"
+            >
+              Cédula de Identidad / Usuario
+            </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-                <span className="material-symbols-outlined text-[20px]">person</span>
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                <span className="material-symbols-outlined text-[18px]">badge</span>
               </div>
               <input
+                id="identifier"
                 required
                 type="text"
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
-                placeholder="V-24.123.456 o correo@uneti.edu.ve"
-                className="w-full h-12 pl-12 pr-4 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 focus:bg-white transition-all"
+                placeholder="Ej: V-24123456"
+                autoComplete="username"
+                className="w-full h-10 pl-10 pr-4 bg-white border border-slate-300 rounded-md text-slate-900 text-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-[#003366] focus:border-[#003366] transition-colors"
               />
             </div>
           </div>
 
-          {/* Password */}
+          {/* Campo: Contraseña */}
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Contraseña</label>
+            <label
+              htmlFor="password"
+              className="block text-xs font-semibold text-slate-600 uppercase tracking-wider"
+            >
+              Contraseña
+            </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-                <span className="material-symbols-outlined text-[20px]">lock</span>
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                <span className="material-symbols-outlined text-[18px]">key</span>
               </div>
               <input
+                id="password"
                 required
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full h-12 pl-12 pr-12 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 focus:bg-white transition-all"
+                placeholder="Contraseña de acceso"
+                autoComplete="current-password"
+                className="w-full h-10 pl-10 pr-11 bg-white border border-slate-300 rounded-md text-slate-900 text-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-[#003366] focus:border-[#003366] transition-colors"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-sky-600 transition-colors"
+                aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-700 transition-colors"
               >
-                <span className="material-symbols-outlined text-[20px]">
+                <span className="material-symbols-outlined text-[18px]">
                   {showPassword ? 'visibility_off' : 'visibility'}
                 </span>
               </button>
             </div>
           </div>
 
-          {/* Options Row */}
-          <div className="flex items-center justify-between pt-1">
-            <label className="flex items-center gap-2.5 cursor-pointer group">
+          {/* Opciones */}
+          <div className="flex items-center justify-between">
+            <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
-                className="w-4 h-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500/20"
+                className="w-3.5 h-3.5 rounded-sm border-slate-300 text-[#003366] focus:ring-[#003366]"
               />
-              <span className="text-sm font-semibold text-slate-500 group-hover:text-slate-800 transition-colors">Recordar sesión</span>
+              <span className="text-xs text-slate-600">Mantener sesión iniciada</span>
             </label>
-            <a href="/recuperar-contrasena" className="text-sm font-semibold text-sky-600 hover:text-sky-700 hover:underline underline-offset-4">
-              ¿Olvidaste tu contraseña?
-            </a>
+            <Link
+              to="/auth/recuperar-contrasena"
+              className="text-xs text-[#003366] hover:underline underline-offset-2"
+            >
+              ¿Olvidó su contraseña?
+            </Link>
           </div>
 
-          {/* Submit Button */}
+          {/* Botón de Ingreso */}
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full h-12 flex items-center justify-center gap-2.5 bg-[#0c0939] text-white rounded-xl font-bold text-sm shadow-lg shadow-blue-900/15 hover:bg-[#1a164c] hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-70 disabled:cursor-not-allowed group"
+            className="w-full h-10 flex items-center justify-center gap-2 bg-[#003366] text-white rounded-md font-semibold text-sm hover:bg-[#002a52] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {isLoading ? (
               <>
-                <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-                <span>Autenticando...</span>
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                <span>Verificando...</span>
               </>
             ) : (
               <>
+                <span className="material-symbols-outlined text-[18px]">login</span>
                 <span>Ingresar al Sistema</span>
-                <span className="material-symbols-outlined text-[18px] group-hover:translate-x-0.5 transition-transform">login</span>
               </>
             )}
           </button>
         </form>
 
-        <div className="mt-6 pt-6 border-t border-slate-100 text-center">
-          <p className="text-sm text-slate-400">
-            ¿Necesitas validar un documento?{' '}
-            <Link to="/consulta-externa" className="font-bold text-sky-600 hover:text-sky-700 hover:underline">
-              Consulta Externa
+        {/* Enlace a Consulta Externa */}
+        <div className="mt-6 pt-5 border-t border-slate-100 text-center">
+          <p className="text-xs text-slate-500">
+            ¿Necesita validar un documento oficial?{' '}
+            <Link to="/consulta-externa" className="text-[#003366] font-semibold hover:underline">
+              Acceso de Consulta Externa
             </Link>
           </p>
         </div>
