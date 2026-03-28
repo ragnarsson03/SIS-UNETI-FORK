@@ -1,1 +1,19 @@
 @import "tailwindcss";
+
+@theme {
+  --color-primary: #003366;
+  --color-primary-dark: #002a52;
+  --color-accent: #008b8b;
+  
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-display: 'Plus Jakarta Sans', sans-serif;
+}
+
+@layer base {
+  body {
+    @apply font-sans;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-bold;
+  }
+}
