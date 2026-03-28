@@ -1,7 +1,11 @@
 services:
   # Infraestructura: Base de Datos Soberana
   db:
-    image: postgres:18-alpine
+    build:
+      context: .
+      dockerfile_inline: |
+        FROM postgres:18-alpine
+        COPY database/data_soberana.sql /docker-entrypoint-initdb.d/01_soberana.sql
     container_name: sis_uneti_db
     environment:
       POSTGRES_DB: data_soberana
@@ -11,7 +15,6 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./database/data_soberana.sql:/docker-entrypoint-initdb.d/init.sql
 
   # Infraestructura: Mensajería Redis
   redis:
@@ -23,8 +26,8 @@ services:
   # Aplicación: Backend (NestJS)
   backend:
     build:
-      context: .
-      dockerfile: sis-uneti-backend/Dockerfile
+      context: ./sis-uneti-backend
+      dockerfile: backend.dockerfile
     container_name: sis_uneti_backend
     depends_on:
       - db
@@ -38,6 +41,7 @@ services:
   frontend:
     build:
       context: ./sis-uneti-frontend
+      dockerfile: frontend.dockerfile
     container_name: sis_uneti_frontend
     ports:
       - "5173:5173"
