@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth, Role } from '../../context/AuthContext';
+import unetiLogo from '../../assets/logo_uneti_fondo_blanco.jpeg';
 
 export default function LoginForm() {
   const [identifier, setIdentifier] = useState('');
@@ -30,7 +31,8 @@ export default function LoginForm() {
         throw new Error(data.message || 'Credenciales incorrectas. Verifique e intente nuevamente.');
       }
 
-      const userRole = (data.rol || 'ESTUDIANTE') as Role;
+      const userRole = (data.user?.rol || 'ESTUDIANTE') as Role;
+
 
       login({
         cedula: identifier,
@@ -42,11 +44,10 @@ export default function LoginForm() {
         case 'ESTUDIANTE': navigate('/estudiante/dashboard'); break;
         case 'DOCENTE': navigate('/docente/dashboard'); break;
         case 'COORDINADOR': navigate('/coordinador/dashboard'); break;
-        case 'SECRETARIA': navigate('/secretaria/dashboard'); break;
+        case 'SECRETARIO': navigate('/secretario/dashboard'); break;
         case 'ADMINISTRADOR': navigate('/admin/dashboard'); break;
         default: navigate('/');
       }
-
     } catch (err: any) {
       setError(err.message || 'Error de conexión con el servidor.');
     } finally {
@@ -55,45 +56,75 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="bg-white border border-slate-200 shadow-sm rounded-lg overflow-hidden">
+    <div className="w-full max-w-5xl mx-auto flex rounded-2xl shadow-2xl overflow-hidden min-h-[550px]" style={{ backgroundColor: '#161c2d' }}>
+      
+      {/* LEFT PANE - Blue Info Panel */}
+      <div className="hidden lg:flex flex-col w-[45%] justify-center px-10 py-12 relative overflow-hidden" style={{ backgroundColor: '#1089f2' }}>
+        <div className="relative z-10 flex flex-col h-full">
+          {/* Logo container */}
+          <div className="mb-8 w-24 h-24 bg-white rounded-2xl flex items-center justify-center p-3 shadow-lg shadow-blue-900/20">
+            <img src={unetiLogo} alt="UNETI Logo" className="w-full object-contain" />
+          </div>
 
-      {/* Cabecera institucional */}
-      <div className="bg-[#003366] px-8 py-6 text-white">
-        <div className="flex items-center gap-3 mb-1">
-          <span className="material-symbols-outlined text-[22px] text-sky-300">lock</span>
-          <h1 className="text-base font-semibold tracking-wide">
-            Sistema de Control de Estudios
+          <h1 className="text-white text-4xl font-black tracking-tight leading-tight mb-4">
+            Gestión Académica de Vanguardia
           </h1>
+          
+          <p className="text-blue-100 text-[15px] leading-relaxed mb-10 max-w-sm">
+            Bienvenido al sistema integrado de la Universidad Nacional Experimental de las Telecomunicaciones e Informática.
+          </p>
+
+          <div className="space-y-4 mt-auto">
+            <div className="flex items-center gap-3">
+              <div className="w-5 h-5 rounded-full border border-blue-200/50 flex items-center justify-center">
+                <span className="material-symbols-outlined text-white text-[12px]">verified_user</span>
+              </div>
+              <span className="text-blue-50 text-sm font-medium">Autenticación Institucional Segura</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-5 h-5 rounded-full border border-blue-200/50 flex items-center justify-center">
+                <span className="material-symbols-outlined text-white text-[12px]">menu_book</span>
+              </div>
+              <span className="text-blue-50 text-sm font-medium">Seguimiento Académico en Tiempo Real</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-5 h-5 rounded-full border border-blue-200/50 flex items-center justify-center">
+                <span className="material-symbols-outlined text-white text-[12px]">group</span>
+              </div>
+              <span className="text-blue-50 text-sm font-medium">Integración de Procesos Administrativos</span>
+            </div>
+          </div>
         </div>
-        <p className="text-xs text-blue-200 pl-9">
-          UNETI — Autenticación de Usuario
-        </p>
+
+        {/* Decorative elements */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-black/10 rounded-full blur-[80px] translate-y-1/3 -translate-x-1/4 pointer-events-none"></div>
       </div>
 
-      {/* Cuerpo del formulario */}
-      <div className="px-8 py-7">
+      {/* RIGHT PANE - Form Panel */}
+      <div className="w-full lg:w-[55%] px-8 py-12 md:px-14 flex flex-col justify-center bg-white">
+        
+        <div className="mb-8">
+          <h2 className="text-slate-900 text-3xl font-bold mb-1 tracking-wide">Iniciar Sesión</h2>
+          <p className="text-slate-500 text-sm">Sistema de Gestión Académica SIS-UNETI</p>
+        </div>
 
-        {/* Alerta de error */}
         {error && (
-          <div className="mb-5 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md flex items-start gap-2">
+          <div className="mb-6 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg flex items-start gap-2">
             <span className="material-symbols-outlined text-base flex-shrink-0 mt-0.5">error</span>
-            <p className="text-sm">{error}</p>
+            <p className="text-sm font-medium">{error}</p>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
-
-          {/* Campo: Cédula de Identidad */}
-          <div className="space-y-1.5">
-            <label
-              htmlFor="identifier"
-              className="block text-xs font-semibold text-slate-600 uppercase tracking-wider"
-            >
-              Cédula de Identidad / Usuario
+          {/* Cédula/Usario */}
+          <div className="space-y-2">
+            <label htmlFor="identifier" className="block text-xs font-semibold text-slate-700">
+              Usuario / Cédula Institucional
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                <span className="material-symbols-outlined text-[18px]">badge</span>
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <span className="material-symbols-outlined text-[18px]">person</span>
               </div>
               <input
                 id="identifier"
@@ -101,24 +132,26 @@ export default function LoginForm() {
                 type="text"
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
-                placeholder="Ej: V-24123456"
+                placeholder="Ej: V12345678"
                 autoComplete="username"
-                className="w-full h-10 pl-10 pr-4 bg-white border border-slate-300 rounded-md text-slate-900 text-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-[#003366] focus:border-[#003366] transition-colors"
+                className="w-full h-11 pl-11 pr-4 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600 hover:border-slate-300 transition-colors"
               />
             </div>
           </div>
 
-          {/* Campo: Contraseña */}
-          <div className="space-y-1.5">
-            <label
-              htmlFor="password"
-              className="block text-xs font-semibold text-slate-600 uppercase tracking-wider"
-            >
-              Contraseña
-            </label>
+          {/* Contraseña */}
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <label htmlFor="password" className="block text-xs font-semibold text-slate-700">
+                Contraseña
+              </label>
+              <Link to="/auth/recuperar-contrasena" className="text-xs text-blue-600 hover:text-blue-700 transition-colors font-medium">
+                ¿Olvidó su contraseña?
+              </Link>
+            </div>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                <span className="material-symbols-outlined text-[18px]">key</span>
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <span className="material-symbols-outlined text-[18px]">lock</span>
               </div>
               <input
                 id="password"
@@ -126,15 +159,15 @@ export default function LoginForm() {
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Contraseña de acceso"
+                placeholder="••••••••"
                 autoComplete="current-password"
-                className="w-full h-10 pl-10 pr-11 bg-white border border-slate-300 rounded-md text-slate-900 text-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-[#003366] focus:border-[#003366] transition-colors"
+                className="w-full h-11 pl-11 pr-11 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600 hover:border-slate-300 transition-colors"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-700 transition-colors"
+                tabIndex={-1}
+                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 transition-colors"
               >
                 <span className="material-symbols-outlined text-[18px]">
                   {showPassword ? 'visibility_off' : 'visibility'}
@@ -143,50 +176,48 @@ export default function LoginForm() {
             </div>
           </div>
 
-          {/* Opciones */}
-          <div className="flex items-center justify-between">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                className="w-3.5 h-3.5 rounded-sm border-slate-300 text-[#003366] focus:ring-[#003366]"
-              />
-              <span className="text-xs text-slate-600">Mantener sesión iniciada</span>
+          {/* Recordar sesión */}
+          <div className="flex items-center pt-1">
+            <label className="flex items-center gap-2.5 cursor-pointer group">
+              <div className="relative flex items-center justify-center">
+                <input
+                  type="checkbox"
+                  className="peer sr-only"
+                />
+                <div className="w-4 h-4 rounded-sm border border-slate-300 bg-white peer-checked:bg-blue-600 peer-checked:border-blue-600 transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"></div>
+                <span className="material-symbols-outlined text-white text-[12px] absolute opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none">check</span>
+              </div>
+              <span className="text-xs text-slate-600 group-hover:text-slate-900 transition-colors font-medium">Recordar mi sesión</span>
             </label>
-            <Link
-              to="/auth/recuperar-contrasena"
-              className="text-xs text-[#003366] hover:underline underline-offset-2"
-            >
-              ¿Olvidó su contraseña?
-            </Link>
           </div>
 
-          {/* Botón de Ingreso */}
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full h-10 flex items-center justify-center gap-2 bg-[#003366] text-white rounded-md font-semibold text-sm hover:bg-[#002a52] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full h-11 mt-4 flex items-center justify-center gap-2 bg-[#1089f2] text-white rounded-lg font-bold text-sm shadow-md shadow-blue-500/20 hover:bg-blue-600 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed group relative overflow-hidden"
           >
             {isLoading ? (
               <>
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                <span>Verificando...</span>
               </>
             ) : (
               <>
-                <span className="material-symbols-outlined text-[18px]">login</span>
                 <span>Ingresar al Sistema</span>
+                <span className="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
               </>
             )}
           </button>
         </form>
 
-        {/* Enlace a Consulta Externa */}
-        <div className="mt-6 pt-5 border-t border-slate-100 text-center">
-          <p className="text-xs text-slate-500">
-            ¿Necesita validar un documento oficial?{' '}
-            <Link to="/consulta-externa" className="text-[#003366] font-semibold hover:underline">
-              Acceso de Consulta Externa
-            </Link>
+        {/* Footer info in right pane */}
+        <div className="mt-8 pt-6 border-t border-slate-100">
+          <p className="text-[10px] text-center text-slate-400 leading-relaxed max-w-sm mx-auto">
+            Al iniciar sesión, usted acepta los{' '}
+            <a href="#" className="underline hover:text-slate-600">Términos de Servicio</a>{' '}
+            y la{' '}
+            <a href="#" className="underline hover:text-slate-600">Política de Privacidad</a>.<br/>
+            ¿Necesita ayuda? <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">Contacte al Soporte IT UNETI</a>
           </p>
         </div>
       </div>

@@ -24,10 +24,8 @@ export class Usuario {
     @Column({ name: 'salt', type: 'varchar' })
     salt: string;
 
-    // El rol no existe como columna en la tabla de usuarios según el SQL de seguridad.
-    // Para no romper AuthService, lo dejamos como propiedad opcional sin @Column de TypeORM
-    // o con un select falso si se manejara vía relación.
-    rol?: string;
+    // rol: NO existe en seguridad.usuarios — se obtiene via JOIN con seguridad.roles
+    // Ver auth.service.ts -> validarCredenciales()
 
     @Column({ type: 'boolean', default: true })
     activo: boolean;

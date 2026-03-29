@@ -45,8 +45,8 @@ function App() {
             </Route>
 
             {/* 📋 SECRETARÍA */}
-            <Route element={<ProtectedRoute allowedRoles={['SECRETARIA']} />}>
-              <Route path="/secretaria/dashboard" element={<PlaceholderPage titulo="Control de Estudios Oficial" desc="Bóveda de expedientes físicos y digitales, trámites burocráticos y emisión de constancias." />} />
+            <Route element={<ProtectedRoute allowedRoles={['SECRETARIO']} />}>
+              <Route path="/secretario/dashboard" element={<PlaceholderPage titulo="Control de Estudios Oficial" desc="Bóveda de expedientes físicos y digitales, trámites burocráticos y emisión de constancias." />} />
             </Route>
 
             {/* ⚙️ ADMINISTRADOR (CÉLULA 01) */}

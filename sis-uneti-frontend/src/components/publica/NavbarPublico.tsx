@@ -1,14 +1,12 @@
-
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import logoUneti from '../../assets/logo_uneti_fondo_blanco.jpeg';
 
-// Constantes de navegación para limpieza del JSX
 const NAV_LINKS = [
-  { path: '/', label: 'Institución' },
-  { path: '/noticias', label: 'Noticias' },
-  { path: '/consulta-externa', label: 'Validación QR' },
+  { path: '/', label: 'INSTITUCIÓN' },
+  { path: '/noticias', label: 'NOTICIAS' },
+  { path: '/soporte', label: 'SOPORTE' },
 ];
 
 export default function NavbarPublico() {
@@ -18,48 +16,50 @@ export default function NavbarPublico() {
   const closeMenu = () => setMobileOpen(false);
 
   return (
-    <nav className="fixed top-0 w-full z-50 bg-white border-b border-slate-200 shadow-sm transition-all duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 h-20 flex items-center justify-between">
+    <nav className="fixed top-0 w-full z-50 transition-all duration-300 border-b border-slate-200 bg-white/90 backdrop-blur-md">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
 
-        {/* Logo Institucional */}
-        <div className="flex items-center gap-3 select-none">
-          <img
-            src={logoUneti}
-            alt="UNETI Logo"
-            className="h-12 w-auto object-contain"
-          />
-          <div className="flex flex-col">
-            <h2 className="text-primary text-xl font-extrabold leading-none tracking-tight">SIS-UNETI</h2>
-            <span className="text-[10px] uppercase tracking-widest font-bold text-slate-500">
-              Sistema de Control de Estudios
-            </span>
+        {/* Logo Institucional (Re-creado a partir de asset importado) */}
+        <Link to="/" className="flex items-center gap-3 select-none flex-shrink-0" onClick={closeMenu}>
+          <img src={logoUneti} alt="UNETI Logo" className="h-10 w-auto object-contain rounded-md" />
+          <div className="flex flex-col border-l border-slate-300 pl-3">
+            <h2 className="text-blue-900 text-xl font-black tracking-widest leading-none">SIS-UNETI</h2>
+            <span className="text-slate-500 text-[9px] uppercase tracking-widest font-bold mt-1">SISTEMA DE CONTROL DE ESTUDIOS</span>
           </div>
-        </div>
+        </Link>
 
         {/* Menú Desktop */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-6">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.path}
               to={link.path}
-              className="text-sm font-bold text-slate-700 hover:text-primary transition-colors"
+              className="text-xs font-bold text-slate-600 hover:text-blue-700 transition-colors tracking-wider"
             >
               {link.label}
             </Link>
           ))}
-          <Link
-            to="/auth/login"
-            className="px-6 py-2.5 bg-primary text-white text-sm font-bold rounded-lg shadow-lg shadow-primary/20 hover:bg-primary-dark transition-all transform hover:-translate-y-0.5"
-          >
-            Acceder
-          </Link>
+          <div className="flex items-center gap-3 pl-2 border-l border-slate-200">
+            <Link
+              to="/soporte/mesa-ayuda"
+              className="px-5 py-2 text-blue-600 text-xs font-bold rounded-lg border border-blue-600/30 hover:bg-blue-50 transition-colors tracking-wider flex-shrink-0"
+            >
+              MESA DE AYUDA
+            </Link>
+            <Link
+              to="/auth/login"
+              className="px-6 py-2 bg-blue-700 text-white text-xs font-bold rounded-lg shadow-md hover:bg-blue-800 transition-colors tracking-wider flex-shrink-0"
+            >
+              ACCEDER
+            </Link>
+          </div>
         </div>
 
         {/* Botón Hamburguesa Mobile */}
         <div className="md:hidden flex items-center">
           <button
             type="button"
-            className="p-2 text-slate-600 hover:text-primary transition-colors focus:outline-none"
+            className="p-2 text-slate-600 hover:text-blue-700 transition-colors focus:outline-none"
             onClick={toggleMenu}
             aria-expanded={mobileOpen}
           >
@@ -70,27 +70,35 @@ export default function NavbarPublico() {
 
       {/* Menú Mobile Desplegable */}
       <div
-        className={`md:hidden absolute top-20 left-0 w-full bg-white border-b border-slate-200 shadow-xl transition-all duration-300 overflow-hidden ${mobileOpen ? 'max-h-[350px] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'
-          }`}
+        className={`md:hidden absolute top-20 left-0 w-full border-b border-slate-200 shadow-xl transition-all duration-300 overflow-hidden bg-white ${
+          mobileOpen ? 'max-h-[350px] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'
+        }`}
       >
         <div className="px-4 py-6 flex flex-col gap-2">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.path}
               to={link.path}
-              className="w-full px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 hover:text-primary rounded-xl transition-all"
+              className="w-full px-4 py-3 text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-blue-700 rounded-lg transition-colors tracking-wider"
               onClick={closeMenu}
             >
               {link.label}
             </Link>
           ))}
-          <div className="pt-4 px-2">
+          <div className="pt-4 px-2 flex flex-col gap-3">
             <Link
-              to="/auth/login"
-              className="w-full flex items-center justify-center h-12 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20"
+              to="/soporte/mesa-ayuda"
+              className="w-full flex items-center justify-center p-3 text-blue-700 font-bold text-xs rounded-lg border border-blue-600/30 hover:bg-blue-50 tracking-wider"
               onClick={closeMenu}
             >
-              Acceder al Sistema
+              MESA DE AYUDA
+            </Link>
+            <Link
+              to="/auth/login"
+              className="w-full flex items-center justify-center p-3 bg-blue-700 text-white font-bold text-xs rounded-lg shadow-md tracking-wider"
+              onClick={closeMenu}
+            >
+              ACCEDER
             </Link>
           </div>
         </div>
@@ -98,4 +106,3 @@ export default function NavbarPublico() {
     </nav>
   );
 }
-
