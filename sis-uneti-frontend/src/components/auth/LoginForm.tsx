@@ -31,8 +31,15 @@ export default function LoginForm() {
         throw new Error(data.message || 'Credenciales incorrectas. Verifique e intente nuevamente.');
       }
 
-      const userRole = (data.user?.rol || 'ESTUDIANTE') as Role;
+      // === DIAGNÓSTICO (temp): Ver exactamente qué devuelve el backend ===
+      console.log('[LOGIN DEBUG] Respuesta completa:', JSON.stringify(data));
+      console.log('[LOGIN DEBUG] data.user?.rol =', data.user?.rol, '| data.rol =', data.rol);
 
+      // Extraemos el rol soportando ambas estructuras de respuesta: data.user.rol y data.rol
+      const rawRol = data.user?.rol ?? data.rol ?? 'ESTUDIANTE';
+      const userRole = String(rawRol).trim().toUpperCase() as Role;
+
+      console.log('[LOGIN DEBUG] userRole final =', JSON.stringify(userRole));
 
       login({
         cedula: identifier,
@@ -40,14 +47,17 @@ export default function LoginForm() {
         token: data.token,
       });
 
-      switch (userRole) {
-        case 'ESTUDIANTE': navigate('/estudiante/dashboard'); break;
-        case 'DOCENTE': navigate('/docente/dashboard'); break;
-        case 'COORDINADOR': navigate('/coordinador/dashboard'); break;
-        case 'SECRETARIO': navigate('/secretario/dashboard'); break;
-        case 'ADMINISTRADOR': navigate('/admin/dashboard'); break;
-        default: navigate('/');
-      }
+      // Mapa de rutas — más robusto que switch ante cualquier inconsistencia de tipo
+      const RUTAS: Record<string, string> = {
+        ADMINISTRADOR: '/admin/dashboard',
+        ESTUDIANTE:    '/estudiante/dashboard',
+        DOCENTE:       '/docente/dashboard',
+        COORDINADOR:   '/coordinador/dashboard',
+        SECRETARIO:    '/secretario/dashboard',
+      };
+      const destino = RUTAS[String(userRole)] ?? '/estudiante/dashboard';
+      console.log('[LOGIN DEBUG] Navegando a:', destino);
+      navigate(destino);
     } catch (err: any) {
       setError(err.message || 'Error de conexión con el servidor.');
     } finally {
