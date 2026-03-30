@@ -6,6 +6,7 @@ services:
       dockerfile_inline: |
         FROM postgres:18-alpine
         COPY database/data_soberana.sql /docker-entrypoint-initdb.d/01_soberana.sql
+        COPY database/02_seed_usuarios.sql /docker-entrypoint-initdb.d/02_seed_usuarios.sql
     container_name: sis_uneti_db
     environment:
       POSTGRES_DB: data_soberana
@@ -16,6 +17,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+
   # Infraestructura: Mensajería Redis
   redis:
     image: redis:7-alpine
@@ -23,17 +25,42 @@ services:
     ports:
       - "6379:6379"
 
-  # Aplicación: Backend (NestJS)
-  backend:
+  # Microservicio: API Gateway (punto de entrada HTTP desde el frontend)
+  api-gateway:
     build:
       context: ./sis-uneti-backend
       dockerfile: backend.dockerfile
-    container_name: sis_uneti_backend
+      args:
+        APP_NAME: api-gateway
+    container_name: sis_uneti_gateway
     depends_on:
-      - db
       - redis
     ports:
       - "3000:3000"
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    env_file:
+      - ./sis-uneti-backend/.env
+
+  # Microservicio: Auth Service (escucha Redis, valida credenciales)
+  auth-service:
+    build:
+      context: ./sis-uneti-backend
+      dockerfile: backend.dockerfile
+      args:
+        APP_NAME: auth-service
+    container_name: sis_uneti_auth
+    depends_on:
+      - db
+      - redis
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      DB_HOST: db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-1234}
+      POSTGRES_DB: data_soberana
     env_file:
       - ./sis-uneti-backend/.env
 
@@ -46,7 +73,7 @@ services:
     ports:
       - "5173:5173"
     depends_on:
-      - backend
+      - api-gateway
 
 volumes:
-  postgres_data:
+  postgres_data:

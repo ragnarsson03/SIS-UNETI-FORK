@@ -8,16 +8,16 @@ import FooterPublico from '../components/publica/FooterPublico';
 export default function PublicLayout() {
   const { isAuthenticated, user } = useAuth();
 
-  // Si el usuario ya está autenticado, redirigirlo a su panel.
   if (isAuthenticated && user) {
     const rolesMap: Record<string, string> = {
-      'ESTUDIANTE': '/estudiante/dashboard',
-      'DOCENTE': '/docente/dashboard',
-      'COORDINADOR': '/coordinador/dashboard',
-      'SECRETARIA': '/secretaria/dashboard',
+      'ESTUDIANTE':    '/estudiante/dashboard',
+      'DOCENTE':       '/docente/dashboard',
+      'COORDINADOR':   '/coordinador/dashboard',
+      'SECRETARIO':    '/secretario/dashboard',
       'ADMINISTRADOR': '/admin/dashboard',
     };
-    return <Navigate to={rolesMap[user.rol!] || '/'} replace />;
+    const destino = rolesMap[String(user.rol ?? '').trim().toUpperCase()] || '/estudiante/dashboard';
+    return <Navigate to={destino} replace />;
   }
 
   return (

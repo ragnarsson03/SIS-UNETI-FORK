@@ -64,18 +64,18 @@ export default function HeroSection() {
           </div>
 
           {/* Columna Derecha: Visualización del sistema */}
-          <div className="relative group lg:block hidden">
+          <div className="relative group w-full mt-6 lg:mt-0">
             <div className="absolute -inset-1.5 bg-gradient-to-r from-primary/30 to-blue-500/20 rounded-2xl blur-xl opacity-30 group-hover:opacity-50 transition duration-1000"></div>
-            <div className="relative bg-white rounded-2xl overflow-hidden shadow-2xl border border-slate-200">
+            <div className="relative overflow-hidden w-full h-full rounded-2xl shadow-2xl border border-slate-200 bg-white">
               {/* Pantalla principal del campus */}
               <img 
                 src={campusHero} 
                 alt="Prototipo SIS-UNETI" 
-                className="w-full aspect-[16/10] object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                className="w-full min-h-[250px] md:max-h-[500px] md:aspect-[16/9] object-cover transition-transform duration-700 group-hover:scale-[1.03]"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-8">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-5 md:p-8">
                 <div className="w-full">
-                  <p className="text-white text-sm font-bold italic opacity-90 mb-2 leading-relaxed">
+                  <p className="text-white text-xs md:text-sm font-bold italic opacity-90 mb-1 md:mb-2 leading-relaxed">
                     "Transformando la educación a través de la digitalización soberana."
                   </p>
                 </div>

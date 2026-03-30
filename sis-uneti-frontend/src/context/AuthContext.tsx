@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 
 // Tipos base para el usuario y roles válidos (Célula 01)
-export type Role = 'ESTUDIANTE' | 'DOCENTE' | 'COORDINADOR' | 'SECRETARIA' | 'ADMINISTRADOR' | null;
+export type Role = 'ESTUDIANTE' | 'DOCENTE' | 'COORDINADOR' | 'SECRETARIO' | 'ADMINISTRADOR' | null;
 
 interface UserData {
   cedula: string;

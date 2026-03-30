@@ -45,9 +45,10 @@ USER nodejs
 # Puerto del microservicio
 EXPOSE 3000
 
-# Argumento para saber qué microservicio levantar
+# Argumento para saber qué microservicio levantar (pasado desde docker-compose)
 ARG APP_NAME=api-gateway
+# Convertimos el ARG en ENV para que sea accesible en runtime (CMD puede usar ENV, no ARG)
+ENV APP_NAME=${APP_NAME}
 
-# Comando de ejecución
-CMD ["node", "dist/apps/api-gateway/main.js"]
-
+# Comando de ejecución dinámico usando variable de entorno
+CMD node dist/apps/${APP_NAME}/main.js
