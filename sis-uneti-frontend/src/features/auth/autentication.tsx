@@ -48,7 +48,7 @@ export default function Autentication() {
         case 'ESTUDIANTE': navigate('/estudiante/dashboard'); break;
         case 'DOCENTE': navigate('/docente/dashboard'); break;
         case 'COORDINADOR': navigate('/coordinador/dashboard'); break;
-        case 'SECRETARIA': navigate('/secretaria/dashboard'); break;
+        case 'SECRETARIO': navigate('/secretario/dashboard'); break;
         case 'ADMINISTRADOR': navigate('/admin/dashboard'); break;
         default: throw new Error('Rol no posicionado en la matriz del ecosistema.');
       }
