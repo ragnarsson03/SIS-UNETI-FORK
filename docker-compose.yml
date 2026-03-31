@@ -12,11 +12,20 @@ services:
       POSTGRES_DB: data_soberana
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${DB_PASSWORD:-1234}
+      # ✅ Añadir configuración de timezone para coincidir con tu SQL
+      TZ: America/Caracas
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
+    # ✅ Añadir healthcheck para que otros servicios esperen a que DB esté lista
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d data_soberana"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - sis-uneti-network
 
   # Infraestructura: Mensajería Redis
   redis:
@@ -24,6 +33,14 @@ services:
     container_name: sis_uneti_redis
     ports:
       - "6379:6379"
+    # ✅ Añadir healthcheck para Redis
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - sis-uneti-network
 
   # Microservicio: API Gateway (punto de entrada HTTP desde el frontend)
   api-gateway:
@@ -34,16 +51,27 @@ services:
         APP_NAME: api-gateway
     container_name: sis_uneti_gateway
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy  # ✅ Espera a que Redis esté saludable
+      auth-service:
+        condition: service_started
+      admin-service:
+        condition: service_started
     ports:
       - "3000:3000"
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      REDIS_URL: redis://redis:6379  # ✅ Añadir URL completa para compatibilidad
+      PORT: 3000
+      JWT_SECRET: ${JWT_SECRET:-super-secret-key-change-in-production}
     env_file:
       - ./sis-uneti-backend/.env
+    networks:
+      - sis-uneti-network
+    restart: unless-stopped
 
-  # Microservicio: Auth Service (escucha Redis, valida credenciales)
+  # Microservicio: Auth Service (autenticación y JWT)
   auth-service:
     build:
       context: ./sis-uneti-backend
@@ -52,17 +80,64 @@ services:
         APP_NAME: auth-service
     container_name: sis_uneti_auth
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy  # ✅ Espera a que DB esté lista
+      redis:
+        condition: service_healthy
     environment:
+      # Redis
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      REDIS_URL: redis://redis:6379
+      # Base de datos
       DB_HOST: db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-1234}
-      POSTGRES_DB: data_soberana
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: ${DB_PASSWORD:-1234}
+      DB_DATABASE: data_soberana
+      # Servicio
+      PORT: 3001
+      JWT_SECRET: ${JWT_SECRET:-super-secret-key-change-in-production}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-super-secret-refresh-key-change-in-production}
+      NODE_ENV: ${NODE_ENV:-development}
     env_file:
       - ./sis-uneti-backend/.env
+    networks:
+      - sis-uneti-network
+    restart: unless-stopped
+
+  # Microservicio: Admin Service (gestión de usuarios y roles) - NUEVO
+  admin-service:
+    build:
+      context: ./sis-uneti-backend
+      dockerfile: backend.dockerfile
+      args:
+        APP_NAME: admin-service
+    container_name: sis_uneti_admin
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      # Redis
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_URL: redis://redis:6379
+      # Base de datos
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: ${DB_PASSWORD:-1234}
+      DB_DATABASE: data_soberana
+      # Servicio
+      PORT: 3002
+      NODE_ENV: ${NODE_ENV:-development}
+    env_file:
+      - ./sis-uneti-backend/.env
+    networks:
+      - sis-uneti-network
+    restart: unless-stopped
 
   # Aplicación: Frontend (React)
   frontend:
@@ -72,9 +147,19 @@ services:
     container_name: sis_uneti_frontend
     ports:
       - "5173:5173"
+    environment:
+      VITE_API_URL: http://localhost:3000  # ✅ URL del API Gateway
     depends_on:
       - api-gateway
+    networks:
+      - sis-uneti-network
+    restart: unless-stopped
 
 volumes:
   postgres_data:
-  
+    name: sis_uneti_postgres_data  # ✅ Nombre explícito para el volumen
+
+networks:
+  sis-uneti-network:
+    name: sis_uneti_network  # ✅ Nombre explícito para la red
+    driver: bridge
