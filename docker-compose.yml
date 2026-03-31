@@ -76,4 +76,5 @@ services:
       - api-gateway
 
 volumes:
-  postgres_data:
+  postgres_data:
+  
