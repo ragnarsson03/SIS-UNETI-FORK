@@ -2,7 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
-import { Usuario } from './entities/usuario.entity';
+import { Usuario } from '../../libs/common/src/usuarios/entidades/usuario.entity';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -28,7 +28,7 @@ export class AuthService {
             LEFT JOIN seguridad.usuario_roles ur ON ur.usuario_id = u.id
             LEFT JOIN seguridad.roles r ON r.id = ur.rol_id
             WHERE u.cedula = $1
-              AND u.activo = true
+            AND u.activo = true
             LIMIT 1`,
             [dto.cedula]
         );
