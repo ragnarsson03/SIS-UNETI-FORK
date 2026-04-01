@@ -27,6 +27,24 @@
       "compilerOptions": {
         "tsConfigPath": "apps/auth-service/tsconfig.app.json"
       }
+    },
+    "usuario-administrador": {
+      "type": "application",
+      "root": "apps/usuario-administrador",
+      "entryFile": "main",
+      "sourceRoot": "apps/usuario-administrador/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/usuario-administrador/tsconfig.app.json"
+      }
+    },
+    "common": {
+      "type": "library",
+      "root": "libs/common",
+      "entryFile": "index",
+      "sourceRoot": "libs/common/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/common/tsconfig.lib.json"
+      }
     }
   }
 }

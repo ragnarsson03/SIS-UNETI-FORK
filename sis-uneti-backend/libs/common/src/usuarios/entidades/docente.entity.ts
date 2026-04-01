@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToOne, JoinColumn } from 'typeorm';
-import { Usuario } from '../../usuarios/entidades/usuario.entity';
+import { Usuario } from './usuario.entity';
 
 /**
  * Entidad que mapea la tabla docentes.docentes

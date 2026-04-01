@@ -1,15 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsInt, Min, Max, IsString } from 'class-validator';
-import { CrearUsuarioBaseDto } from '../../common/dto/crear-usuario-base.dto';
-import { Roles } from '../../common/enums/roles.enum';
+import { IsOptional, IsInt, Min, Max, IsString, IsIn } from 'class-validator';
+import { CrearUsuarioBaseDto } from '@app/common/common/dto/crear-usuario-base.dto';
+import { Roles } from '@app/common/common/enums/roles.enum';
 
 export class CrearDocenteDto extends CrearUsuarioBaseDto {
 @ApiProperty({ description: 'Categoría académica', enum: ['INSTRUCTOR', 'ASISTENTE', 'AGREGADO', 'ASOCIADO', 'TITULAR', 'JUBILADO'] })
 @IsString()
+@IsIn(['INSTRUCTOR', 'ASISTENTE', 'AGREGADO', 'ASOCIADO', 'TITULAR', 'JUBILADO'])
 categoria_academica: string;
 
 @ApiProperty({ description: 'Dedicación', enum: ['TIEMPO_COMPLETO', 'MEDIO_TIEMPO', 'TIEMPO_HORARIO', 'INVITADO'] })
 @IsString()
+@IsIn(['TIEMPO_COMPLETO', 'MEDIO_TIEMPO', 'TIEMPO_HORARIO', 'INVITADO'])
 dedicacion: string;
 
 @ApiProperty({ description: 'Escalafón', example: 'I', required: false })

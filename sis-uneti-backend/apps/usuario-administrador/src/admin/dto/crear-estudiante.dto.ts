@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsUUID, IsString, IsDateString, IsOptional, IsInt, Min, Max } from 'class-validator';
-import { CrearUsuarioBaseDto } from '../../common/dto/crear-usuario-base.dto';
-import { Roles } from '../../common/enums/roles.enum';
+import { IsUUID, IsString, IsDateString, IsOptional, IsInt, Min, Max, IsIn, IsBoolean } from 'class-validator';
+import { CrearUsuarioBaseDto } from '@app/common/common/dto/crear-usuario-base.dto';
+import { Roles } from '@app/common/common/enums/roles.enum';
 
 export class CrearEstudianteDto extends CrearUsuarioBaseDto {
 @ApiProperty({ description: 'ID de la cohorte', example: 'uuid-de-la-cohorte' })
@@ -14,6 +14,7 @@ pnfId: string;
 
 @ApiProperty({ description: 'Tipo de ingreso', enum: ['OPSU', 'CONGRESO', 'CONVENIO', 'PARTICULAR', 'TRASLADO', 'REINGRESO'] })
 @IsString()
+@IsIn(['OPSU', 'CONGRESO', 'CONVENIO', 'PARTICULAR', 'TRASLADO', 'REINGRESO'])
 tipo_ingreso: string;
 
 @ApiProperty({ description: 'Convenio empresa (si aplica)', required: false })
@@ -54,6 +55,7 @@ nivel_socioeconomico?: string;
 
 @ApiProperty({ description: 'Recibe beca', default: false })
 @IsOptional()
+@IsBoolean()
 recibe_beca?: boolean;
 
 @ApiProperty({ description: 'Rol del usuario (siempre ESTUDIANTE)', default: Roles.ESTUDIANTE })

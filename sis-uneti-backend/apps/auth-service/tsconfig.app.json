@@ -4,5 +4,6 @@
     "outDir": "../../dist/apps/auth-service",
     "types": ["node"]
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["**/*.spec.ts"]
 }

@@ -6,7 +6,8 @@ import { CrearCoordinadorDto } from './dto/crear-coordinador.dto';
 import { CrearSecretarioDto } from './dto/crear-secretario.dto';
 import { CrearDocenteDto } from './dto/crear-docente.dto';
 import { CrearEstudianteDto } from './dto/crear-estudiante.dto';
-import { Roles } from '../common/enums/roles.enum';
+import { CrearUsuarioBaseDto } from '@app/common/common/dto/crear-usuario-base.dto';
+import { Roles } from '@app/common/common/enums/roles.enum';
 
 @Injectable()
 export class AdminService {
@@ -55,6 +56,36 @@ async crearCoordinador(dto: CrearCoordinadorDto): Promise<any> {
     rol: Roles.COORDINADOR,
     pnfId: dto.pnfId,
     mensaje: 'Coordinador creado exitosamente. Se ha enviado un correo con las credenciales temporales.',
+    };
+}
+
+/**
+ * Crea un usuario con rol ADMINISTRADOR
+ */
+async crearAdministrador(dto: CrearUsuarioBaseDto): Promise<any> {
+    this.logger.log(`Creando administrador: ${dto.email}`);
+
+    const usuario = await this.usuariosRepository.crearUsuario({
+    cedula: dto.cedula,
+    email: dto.email,
+    password: dto.password,
+    nombres: dto.nombres,
+    apellidos: dto.apellidos,
+    telefono_principal: dto.telefono_principal,
+    direccion: dto.direccion,
+    });
+
+    const rolId = await this.usuariosRepository.obtenerIdRolPorCodigo(Roles.ADMINISTRADOR);
+    if (rolId) {
+    await this.usuariosRepository.asignarRol(usuario.id, rolId);
+    }
+
+    return {
+    id: usuario.id,
+    cedula: usuario.cedula,
+    email: usuario.email,
+    rol: Roles.ADMINISTRADOR,
+    mensaje: 'Administrador creado exitosamente.',
     };
 }
 

@@ -112,7 +112,7 @@ services:
       context: ./sis-uneti-backend
       dockerfile: backend.dockerfile
       args:
-        APP_NAME: admin-service
+        APP_NAME: usuario-administrador
     container_name: sis_uneti_admin
     depends_on:
       db:
@@ -146,7 +146,7 @@ services:
       dockerfile: frontend.dockerfile
     container_name: sis_uneti_frontend
     ports:
-      - "5173:5173"
+      - "5000:5000"
     environment:
       VITE_API_URL: http://localhost:3000  # ✅ URL del API Gateway
     depends_on:

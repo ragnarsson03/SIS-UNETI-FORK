@@ -1,5 +1,5 @@
 import { SetMetadata } from '@nestjs/common';
-import { Roles } from 'src/common/enums/roles.enum';
+import { Roles } from '../../common/enums/roles.enum';
 
 /**
  * Clave para almacenar los roles requeridos en los metadatos

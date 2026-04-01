@@ -1,4 +1,4 @@
-import { Roles } from "src/common/enums/roles.enum";
+import { Roles } from '@app/common/common/enums/roles.enum';
 
 /**
  * Interfaz que define la estructura de respuesta después de crear un usuario
