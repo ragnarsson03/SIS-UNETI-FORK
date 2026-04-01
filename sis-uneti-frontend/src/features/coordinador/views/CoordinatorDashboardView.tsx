@@ -8,8 +8,6 @@ import {
     UserPlus, 
     GraduationCap, 
     BookOpen,
-    ChevronLeft,
-    ChevronRight,
     Edit,
     Search
 } from 'lucide-react';
