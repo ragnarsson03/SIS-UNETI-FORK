@@ -18,6 +18,8 @@ export const NAVIGATION_CONFIG: Record<string, NavItemType[]> = {
   admin: [
     { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { to: '/admin/usuarios', label: 'Gestión de Usuarios', icon: Users },
+    { to: '/admin/pnf', label: 'Gestión de PNF', icon: GraduationCap },
+    { to: '/admin/auditoria', label: 'Auditoría', icon: History },
     { to: '/admin/seguridad', label: 'Roles y Permisos', icon: ShieldCheck },
   ],
   coordinador: [

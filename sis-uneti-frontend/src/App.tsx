@@ -7,6 +7,9 @@ import LoginPage from './pages/auth/LoginPage';
 import PlaceholderPage from './components/common/PlaceholderPage';
 import LandingPage from './pages/publica/LandingPage';
 import AdminDashboardPage from './pages/admin/AdminDashboardPage';
+import AdminUsersPage from './pages/admin/AdminUsersPage';
+import PnfManagementPage from './pages/admin/PnfManagementPage';
+import AuditLogsPage from './pages/admin/AuditLogsPage';
 import StudentDashboardPage from './pages/estudiante/StudentDashboardPage';
 import DocenteDashboardPage from './pages/docente/DocenteDashboardPage';
 import CoordinatorDashboardPage from './pages/coordinador/CoordinatorDashboardPage';
@@ -63,8 +66,10 @@ function App() {
             {/* ⚙️ ADMINISTRADOR (CÉLULA 01) */}
             <Route element={<ProtectedRoute allowedRoles={['ADMINISTRADOR']} />}>
               <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+              <Route path="/admin/usuarios" element={<AdminUsersPage />} />
+              <Route path="/admin/pnf" element={<PnfManagementPage />} />
+              <Route path="/admin/auditoria" element={<AuditLogsPage />} />
               <Route path="/admin/seguridad" element={<PlaceholderPage titulo="Bóveda de Ciberseguridad" desc="Control maestro de Permisos, Logs de Trazabilidad Forense y prevención de intrusiones corporativas." />} />
-              <Route path="/admin/usuarios" element={<PlaceholderPage titulo="Gestión de Usuarios" desc="Creación, edición y baja de cuentas institucionales del sistema SIS-UNETI." />} />
             </Route>
 
           </Route>
