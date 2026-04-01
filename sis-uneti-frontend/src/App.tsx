@@ -6,6 +6,12 @@ import DashboardLayout from './layouts/DashboardLayout';
 import LoginPage from './pages/auth/LoginPage';
 import PlaceholderPage from './components/common/PlaceholderPage';
 import LandingPage from './pages/publica/LandingPage';
+import AdminDashboardPage from './pages/admin/AdminDashboardPage';
+import StudentDashboardPage from './pages/estudiante/StudentDashboardPage';
+import DocenteDashboardPage from './pages/docente/DocenteDashboardPage';
+import CoordinatorDashboardPage from './pages/coordinador/CoordinatorDashboardPage';
+import SecretarioDashboardPage from './pages/secretario/SecretarioDashboardPage';
+import AuditorDashboardPage from './pages/auditor/AuditorDashboardPage';
 
 function App() {
   return (
@@ -27,32 +33,38 @@ function App() {
           {/* ============================== */}
           <Route element={<DashboardLayout />}>
             
-            {/* 👨🎓 ESTUDIANTE */}
+            {/* 👨‍🎓 ESTUDIANTE */}
             <Route element={<ProtectedRoute allowedRoles={['ESTUDIANTE']} />}>
-              <Route path="/estudiante/dashboard" element={<PlaceholderPage titulo="Dashboard Estudiantil" desc="Tu rendimiento académico global, progreso al grado y alertas de inscripciones." />} />
+              <Route path="/estudiante/dashboard" element={<StudentDashboardPage />} />
               <Route path="/estudiante/matricula" element={<PlaceholderPage titulo="Proceso de Inscripción" desc="Oferta académica, verificación de prelaciones y registro de Unidades Curriculares." />} />
             </Route>
 
-            {/* 👨🏫 DOCENTE */}
+            {/* 👨‍🏫 DOCENTE */}
             <Route element={<ProtectedRoute allowedRoles={['DOCENTE']} />}>
-              <Route path="/docente/dashboard" element={<PlaceholderPage titulo="Portal Docente" desc="Tus horarios visuales, estado de alertas y sincronización bidireccional con Moodle." />} />
+              <Route path="/docente/dashboard" element={<DocenteDashboardPage />} />
               <Route path="/docente/calificaciones" element={<PlaceholderPage titulo="Carga de Calificaciones" desc="Revisión de actas manuales y automatizadas con firma digital criptográfica." />} />
             </Route>
 
             {/* 🎓 COORDINADOR */}
             <Route element={<ProtectedRoute allowedRoles={['COORDINADOR']} />}>
-              <Route path="/coordinador/dashboard" element={<PlaceholderPage titulo="Control de Escuela" desc="Métrica KPi integral, gestión académica global, planificación de cohortes y PNF." />} />
+              <Route path="/coordinador/dashboard" element={<CoordinatorDashboardPage />} />
             </Route>
 
             {/* 📋 SECRETARÍA */}
             <Route element={<ProtectedRoute allowedRoles={['SECRETARIO']} />}>
-              <Route path="/secretario/dashboard" element={<PlaceholderPage titulo="Control de Estudios Oficial" desc="Bóveda de expedientes físicos y digitales, trámites burocráticos y emisión de constancias." />} />
+              <Route path="/secretario/dashboard" element={<SecretarioDashboardPage />} />
+            </Route>
+
+            {/* ⚠️ AUDITOR */}
+            <Route element={<ProtectedRoute allowedRoles={['AUDITOR']} />}>
+              <Route path="/auditor/dashboard" element={<AuditorDashboardPage />} />
             </Route>
 
             {/* ⚙️ ADMINISTRADOR (CÉLULA 01) */}
             <Route element={<ProtectedRoute allowedRoles={['ADMINISTRADOR']} />}>
-              <Route path="/admin/dashboard" element={<PlaceholderPage titulo="Consola de Administración de Red" desc="Monitor del Estado General del Sistema, Heartbeats de APIs y usuarios en vivo." />} />
+              <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
               <Route path="/admin/seguridad" element={<PlaceholderPage titulo="Bóveda de Ciberseguridad" desc="Control maestro de Permisos, Logs de Trazabilidad Forense y prevención de intrusiones corporativas." />} />
+              <Route path="/admin/usuarios" element={<PlaceholderPage titulo="Gestión de Usuarios" desc="Creación, edición y baja de cuentas institucionales del sistema SIS-UNETI." />} />
             </Route>
 
           </Route>
