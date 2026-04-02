@@ -7,7 +7,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Instalamos TODAS las dependencias (producción + desarrollo) para construir
-RUN npm install --legacy-peer-deps
+RUN npm install
 
 # Copiamos el resto del código y construimos
 COPY . .
@@ -19,7 +19,7 @@ RUN npm run build ${APP_NAME}
 # 🔥 Toque Senior: Limpiamos las dependencias de desarrollo (Nest CLI, schematics, etc.)
 # Esto elimina las vulnerabilidades (ajv, tar) antes de pasar a la etapa de producción,
 # haciendo que la imagen final sea limpia y apta para auditorías de seguridad.
-RUN npm prune --omit=dev --legacy-peer-deps
+RUN npm prune --omit=dev
 
 
 # ETAPA 2: PRODUCCIÓN (Corre seguro y sin root)
