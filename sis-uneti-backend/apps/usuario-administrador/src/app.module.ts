@@ -1,38 +1,44 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
+import { AppController } from './app.controller';
 import { AdminModule } from './admin/admin.module';
-import { RedisModule } from '@app/common/common/redis/redis.module';
+import { UsuariosModule } from './usuarios/usuarios.module';
+import { DocentesModule } from './docentes/docentes.module';
+import { EstudiantesModule } from './estudiantes/estudiantes.module';
+import { RedisModule } from './common/redis/redis.module';
+import { Usuario } from './usuarios/entidades/usuario.entity';
+import { Docente } from './docentes/docente.entity';
+import { Estudiante } from './estudiantes/estudiantes.entity';
 
-import { Usuario, Docente, Estudiante } from '@app/common';
+// Si tienes RefreshToken, también impórtalo
+// import { RefreshToken } from './common/entidades/refresh-token.entity';
 
 @Module({
   imports: [
-    // Carga variables de entorno
-    ConfigModule.forRoot({ isGlobal: true }),
-
-    // Conexión a PostgreSQL
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        type: 'postgres',
-        host: config.getOrThrow<string>('DB_HOST'),
-        port: config.get<number>('DB_PORT', 5432),
-        username: config.getOrThrow<string>('DB_USERNAME'),
-        password: config.getOrThrow<string>('DB_PASSWORD'),
-        database: config.getOrThrow<string>('DB_DATABASE'),
-        entities: [Usuario, Docente, Estudiante],
-        synchronize: false, // NUNCA true en producción
-        schema: 'public',
-      }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
     }),
-
-    // Redis Pub/Sub (global, disponible en toda la app)
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: process.env.DB_HOST || 'localhost',
+      port: parseInt(process.env.DB_PORT || '5432', 10),
+      username: process.env.DB_USERNAME || 'postgres',
+      password: process.env.DB_PASSWORD || 'postgres',
+      database: process.env.DB_DATABASE || 'data_soberana',
+      // ✅ Lista explícita de entidades
+      entities: [Usuario, Docente, Estudiante],
+      synchronize: false,
+      logging: process.env.NODE_ENV === 'development',
+    }),
+    TypeOrmModule.forFeature([Usuario, Docente, Estudiante]), // ← Para que estén disponibles en los módulos
     RedisModule,
-
-    // Módulo de administración de usuarios
     AdminModule,
+    UsuariosModule,
+    DocentesModule,
+    EstudiantesModule,
   ],
+  controllers: [AppController],
 })
 export class AppModule {}

@@ -1,10 +1,22 @@
+// apps/api-gateway/src/gateway/gateway.module.ts
 import { Module } from '@nestjs/common';
-import { RedisModule } from '@app/common/common/redis/redis.module';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import { GatewayController } from './gateway.controller';
 import { GatewayService } from './gateway.service';
 
 @Module({
-  imports: [RedisModule],
+  imports: [
+    ClientsModule.register([
+      {
+        name: 'ADMIN_SERVICE',
+        transport: Transport.REDIS,
+        options: {
+          host: process.env.REDIS_HOST || 'redis',
+          port: 6379,
+        },
+      },
+    ]),
+  ],
   controllers: [GatewayController],
   providers: [GatewayService],
 })

@@ -1,21 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Docente } from '@app/common';
+import { Docente } from './docente.entity';
 
 @Injectable()
 export class DocentesRepository {
 constructor(
     @InjectRepository(Docente)
-    private readonly docenteRepository: Repository<Docente>,
+    private readonly repo: Repository<Docente>,
 ) {}
 
 async crear(datos: Partial<Docente>): Promise<Docente> {
-    const docente = this.docenteRepository.create(datos);
-    return this.docenteRepository.save(docente);
-}
-
-async buscarPorUsuarioId(usuarioId: string): Promise<Docente | null> {
-    return this.docenteRepository.findOne({ where: { usuarioId } });
+    const docente = this.repo.create(datos);
+    return this.repo.save(docente);
 }
 }

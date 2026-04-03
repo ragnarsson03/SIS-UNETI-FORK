@@ -64,4 +64,18 @@ ON CONFLICT DO NOTHING;
 
 RAISE NOTICE '✅ Seed de usuarios completado. Contraseña universal: Uneti2026*';
 
+
+-- 3. Crear Programas Nacionales de Formación (PNF) de prueba (si no existen) para poder crear los diferentes tipos de usuarios vinculados 
+
+INSERT INTO academico.pnf_carreras (codigo, nombre, tipo_programa, duracion_trayectos, resolucion_autorizacion, fecha_autorizacion)
+VALUES
+    ('PNF-01', 'Informacion', 'TSU', 2, 'RES-001-2024', '2024-01-01'),
+    ('PNF-02', 'Telecomunicaciones', 'TSU', 2, 'RES-002-2024', '2024-01-01'),
+    ('PNF-03', 'Informatica', 'INGENIERIA', 4, 'RES-003-2024', '2024-01-01'),
+    ('PNF-04', 'Telecomunicaciones', 'INGENIERIA', 4, 'RES-004-2024', '2024-01-01')
+ON CONFLICT (codigo) DO NOTHING;
+
+-- hacer seeders de cohorte
+--hacer seeders de periodos academicos
+
 END $$;

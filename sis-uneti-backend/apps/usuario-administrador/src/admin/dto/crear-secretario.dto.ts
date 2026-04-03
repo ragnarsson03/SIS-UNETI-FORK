@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsString } from 'class-validator';
-import { CrearUsuarioBaseDto } from '@app/common/common/dto/crear-usuario-base.dto';
-import { Roles } from '@app/common/common/enums/roles.enum';
+import { CrearUsuarioBaseDto } from '../../common/dto/crear-usuario-base.dto';
+import { Roles } from '../../common/enums/roles.enum';
 
 export class CrearSecretarioDto extends CrearUsuarioBaseDto {
 @ApiProperty({ description: 'Unidad administrativa', example: 'Control de Estudios', required: false })

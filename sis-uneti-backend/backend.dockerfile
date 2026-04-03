@@ -14,7 +14,7 @@ COPY . .
 
 # Argumento para definir qué microservicio construir (por defecto: api-gateway)
 ARG APP_NAME=api-gateway
-RUN npm run build ${APP_NAME}
+RUN npx nest build ${APP_NAME}
 
 # 🔥 Toque Senior: Limpiamos las dependencias de desarrollo (Nest CLI, schematics, etc.)
 # Esto elimina las vulnerabilidades (ajv, tar) antes de pasar a la etapa de producción,

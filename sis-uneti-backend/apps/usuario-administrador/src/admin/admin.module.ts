@@ -9,6 +9,5 @@ import { EstudiantesModule } from '../estudiantes/estudiantes.module';
   imports: [UsuariosModule, DocentesModule, EstudiantesModule],
   controllers: [AdminController],
   providers: [AdminService],
-  exports: [AdminService],
 })
 export class AdminModule {}
