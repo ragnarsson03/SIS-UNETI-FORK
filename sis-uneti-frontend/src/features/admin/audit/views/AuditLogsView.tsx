@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
-import { DashboardHero } from '@/features/shared/components/DashboardHero';
-import { DataTable, Column } from '@/features/shared/components/DataTable';
-import { TableFilters, TableFilterConfig } from '@/features/shared/components/TableFilters';
+import { DashboardHero } from '@/features/admin/components/DashboardHero';
+import { DataTable, Column } from '@/components/tables/DataTable';
+import { TableFilters, TableFilterConfig } from '@/components/tables/TableFilters';
 import { History, Search } from 'lucide-react';
 
 interface AuditLog {
