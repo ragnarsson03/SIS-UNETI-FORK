@@ -1,9 +1,9 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../dist/apps/usuario-administrador",
-    "types": ["node"]
+    "declaration": false,
+    "outDir": "../../dist/apps/usuario-administrador"
   },
   "include": ["src/**/*"],
-  "exclude": ["**/*.spec.ts"]
+  "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
 }
