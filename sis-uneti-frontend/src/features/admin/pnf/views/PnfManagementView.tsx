@@ -1,33 +1,16 @@
-import { useState, useMemo } from 'react';
-import { DashboardHero } from '@/features/shared/components/DashboardHero';
-import { DataTable, Column } from '@/features/shared/components/DataTable';
-import { TableFilters, TableFilterConfig } from '@/features/shared/components/TableFilters';
+import { useMemo } from 'react';
+import { DashboardHero } from '@/features/admin/components/DashboardHero';
+import { DataTable, Column } from '@/components/tables/DataTable';
+import { TableFilters } from '@/components/tables/TableFilters';
 import { Button } from '@/components/ui/button';
 import { GraduationCap, Plus, FileUp, Edit, Trash2 } from 'lucide-react';
-
-interface PNF {
-    id: string;
-    code: string;
-    name: string;
-    coordinator: string;
-    status: 'Activo' | 'Inactivo';
-}
+import { usePnf } from '../hooks/usePnf';
+import { PNFData } from '@/types/pnf.types';
 
 export function PnfManagementView() {
-    const [statusFilter, setStatusFilter] = useState('all');
+    const { filteredPnfs, filterConfig, handleClearFilters } = usePnf();
 
-    const pnfs: PNF[] = [
-        { id: '1', code: 'INF-01', name: 'Informática', coordinator: 'Yesmir', status: 'Activo' },
-        { id: '2', code: 'LOG-02', name: 'Logística', coordinator: 'Eliezer', status: 'Activo' },
-        { id: '3', code: 'TUR-03', name: 'Turismo', coordinator: 'Juan Jose', status: 'Inactivo' },
-        { id: '4', code: 'ADM-04', name: 'Administración', coordinator: 'Miguel Eduardo', status: 'Activo' },
-    ];
-
-    const filteredPnfs = useMemo(() => {
-        return pnfs.filter(pnf => statusFilter === 'all' || pnf.status === statusFilter);
-    }, [statusFilter]);
-
-    const columns: Column<PNF>[] = [
+    const columns: Column<PNFData>[] = useMemo(() => [
         { header: 'Código', key: 'code', className: 'font-bold text-primary-dark' },
         { header: 'Nombre del PNF', key: 'name', className: 'font-medium' },
         { header: 'Coordinador', key: 'coordinator' },
@@ -52,23 +35,7 @@ export function PnfManagementView() {
                 </div>
             )
         }
-    ];
-
-    const filterConfig: TableFilterConfig[] = [
-        {
-            name: 'status',
-            label: 'Estado',
-            value: statusFilter,
-            onChange: setStatusFilter,
-            options: [
-                { label: 'Todos los estados', value: 'all' },
-                { label: 'Activo', value: 'Activo' },
-                { label: 'Inactivo', value: 'Inactivo' },
-            ]
-        }
-    ];
-
-    const handleClearFilters = () => setStatusFilter('all');
+    ], []);
 
     return (
         <div className="min-h-screen pb-10">
