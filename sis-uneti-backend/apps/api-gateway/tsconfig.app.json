@@ -4,5 +4,6 @@
     "outDir": "../../dist/apps/api-gateway",
     "types": ["node"]
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["**/*.spec.ts"]
 }

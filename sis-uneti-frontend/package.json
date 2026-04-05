@@ -9,6 +9,7 @@
         "preview": "vite preview"
     },
     "dependencies": {
+        "@nestjs/microservices": "^11.1.17",
         "axios": "^1.6.0",
         "lucide-react": "^0.300.0",
         "react": "^18.3.1",
@@ -17,9 +18,10 @@
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",
+        "@types/node": "^25.5.0",
         "@types/react": "^18.3.3",
         "@types/react-dom": "^18.3.0",
-        "@vitejs/plugin-react": "^4.3.0",
+        "@vitejs/plugin-react": "^4.7.0",
         "tailwindcss": "^4.0.0",
         "typescript": "^5.4.0",
         "vite": "^7.3.0"
