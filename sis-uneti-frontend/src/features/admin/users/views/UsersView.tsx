@@ -1,9 +1,10 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { DataTable, Column } from '@/components/tables/DataTable';
 import { TableFilters } from '@/components/tables/TableFilters';
 import { WelcomeBanner } from '@/features/shared/components/WelcomeBanner';
+import { UserRegisterForm } from '@/features/admin/users/components/UserRegisterForm';
 import { UserStatsOverview } from '@/features/admin/users/components/UserStatsOverview';
 import { useUsers } from '@/features/admin/users/hooks/useUsers';
 import { UserData } from '@/types/user.types';
@@ -19,6 +20,7 @@ import {
 export function UsersView() {
     const { user } = useAuth();
     const { filteredUsers, filterConfig, handleClearFilters } = useUsers();
+    const [isRegistering, setIsRegistering] = useState(false);
 
     const columns: Column<UserData>[] = useMemo(() => [
         {
@@ -96,23 +98,39 @@ export function UsersView() {
                             <FileUp size={18} />
                             Carga Masiva
                         </Button>
-                        <Button className="bg-primary hover:bg-blue-600 text-white font-bold rounded-xl px-6 shadow-lg shadow-primary/30 flex gap-2 active:scale-95 transition-all">
+                        <Button 
+                            onClick={() => setIsRegistering(!isRegistering)}
+                            className="bg-primary hover:bg-blue-600 text-white font-bold rounded-xl px-6 shadow-lg shadow-primary/30 flex gap-2 active:scale-95 transition-all"
+                        >
                             <UserPlus size={18} />
-                            Nuevo Usuario
+                            {isRegistering ? 'Volver a la Lista' : 'Nuevo Usuario'}
                         </Button>
                     </div>
                 </div>
 
-                <UserStatsOverview />
-
-                <div className="space-y-6">
-                    <TableFilters filters={filterConfig} onClear={handleClearFilters} />
-                    <DataTable 
-                        columns={columns} 
-                        data={filteredUsers} 
-                        emptyMessage="No se encontraron usuarios con esos filtros."
-                    />
-                </div>
+                {isRegistering ? (
+                    <div className="mt-8">
+                        <UserRegisterForm 
+                            onCancel={() => setIsRegistering(false)} 
+                            onSuccess={() => {
+                                setIsRegistering(false);
+                                alert('Usuario registrado con éxito (Simulación)');
+                            }} 
+                        />
+                    </div>
+                ) : (
+                    <>
+                        <UserStatsOverview />
+                        <div className="space-y-6">
+                            <TableFilters filters={filterConfig} onClear={handleClearFilters} />
+                            <DataTable 
+                                columns={columns} 
+                                data={filteredUsers} 
+                                emptyMessage="No se encontraron usuarios con esos filtros."
+                            />
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     );
