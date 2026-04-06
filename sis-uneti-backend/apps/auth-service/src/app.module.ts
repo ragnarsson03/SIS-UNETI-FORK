@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtModule } from '@nestjs/jwt';  // ← Agregar esta importación
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { Usuario } from '@app/common/usuarios/entidades/usuario.entity';
+import { Usuario } from '../../usuario-administrador/src/usuarios/entidades/usuario.entity';
 
 @Module({
   imports: [
@@ -17,6 +18,11 @@ import { Usuario } from '@app/common/usuarios/entidades/usuario.entity';
       synchronize: false,
     }),
     TypeOrmModule.forFeature([Usuario]),
+    // ✅ Agregar JwtModule
+    JwtModule.register({
+      secret: process.env.JWT_SECRET || 'super-secret-key',
+      signOptions: { expiresIn: '15m' },
+    }),
   ],
   controllers: [AuthController],
   providers: [AuthService],
