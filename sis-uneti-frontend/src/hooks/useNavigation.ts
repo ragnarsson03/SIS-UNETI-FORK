@@ -8,16 +8,18 @@ export const useNavigation = () => {
 
   // Memoizamos el arreglo de rutas para evitar re-calculos inter-renders en el layout
   const navItems = useMemo<NavItemType[]>(() => {
-    // Si la sesión de F5 aún se está verificando devolvemos seguro vacío sin forzar errores.
     if (isInitializing) return [];
+    
+    // Si el rol es nulo o INVITADO, devolvemos array vacío con advertencia clara
+    if (!user?.rol || user.rol === ('INVITADO' as any)) {
+      console.warn("🛑 Acceso denegado: Rol no autorizado o sesión anónima.");
+      return [];
+    }
 
-    return getNavigationByRole(user?.rol ?? undefined);
+    return getNavigationByRole(user.rol);
   }, [user?.rol, isInitializing]);
 
-  // Log de depuración temporal para monitorear qué devuelve AuthContext
-  console.log("Rol actual:", user?.rol);
+  console.log(`[DEBUG NAV] Estado: ${isInitializing ? 'Cargando' : 'Listo'} | Rol: "${user?.rol}" | Items: ${navItems.length}`);
 
-  return { 
-    navItems 
-  };
+  return { navItems };
 };

@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { userRegisterSchema, type UserRegisterFormData } from '../model/userSchema';
 import { registerUserByRole } from '../api/registerUser';
+import { useAuth } from '@/context/AuthContext';
 
 interface UserRegisterFormProps {
   onSuccess?: () => void;
@@ -12,9 +13,12 @@ interface UserRegisterFormProps {
 export function UserRegisterForm({ onSuccess, onCancel }: UserRegisterFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const { user } = useAuth();
 
   const { register, handleSubmit, formState: { errors } } = useForm<UserRegisterFormData>({
     resolver: zodResolver(userRegisterSchema),
+    mode: 'onTouched',
+    reValidateMode: 'onSubmit',
     defaultValues: {
       rol: 'estudiante'
     }
@@ -25,7 +29,10 @@ export function UserRegisterForm({ onSuccess, onCancel }: UserRegisterFormProps)
     setServerError(null);
 
     try {
-      await registerUserByRole(data);
+      if (!user?.token) {
+        throw new Error('Sesión no detectada. Por seguridad, reingresa al Portal SIS-UNETI.');
+      }
+      await registerUserByRole(data, user.token);
       if (onSuccess) onSuccess();
     } catch (error: any) {
       setServerError(error.message || 'Ocurrió un error al intentar registrar el usuario. Verifica la conexión con el servidor.');
@@ -121,6 +128,7 @@ export function UserRegisterForm({ onSuccess, onCancel }: UserRegisterFormProps)
             <label className="block text-sm font-semibold text-slate-700 mb-1">Contraseña de Acceso</label>
             <input 
               type="password"
+              autoComplete="new-password"
               {...register('password')} 
               className={`w-full p-2.5 border rounded-lg outline-none focus:ring-2 focus:ring-primary/20 transition-all ${errors.password ? 'border-red-500 focus:border-red-500' : 'border-slate-300 focus:border-primary'}`} 
             />

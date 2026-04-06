@@ -40,11 +40,16 @@ export default function LoginForm() {
       const userRole = String(rawRol).trim().toUpperCase() as Role;
 
       console.log('[LOGIN DEBUG] userRole final =', JSON.stringify(userRole));
+      
+      // Mapeo seguro contra el API Gateway (Extrae accessToken como token, y extrae nombre)
+      const validToken = data.accessToken ?? data.token;
+      const validNombre = data.user?.nombre ?? data.nombre;
 
       login({
         cedula: identifier,
         rol: userRole,
-        token: data.token,
+        token: validToken,
+        nombre: validNombre,
       });
 
       // Mapa de rutas — más robusto que switch ante cualquier inconsistencia de tipo

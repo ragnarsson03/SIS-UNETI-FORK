@@ -13,27 +13,27 @@ export interface NavItemType {
   icon: LucideIcon;
 }
 
-// Objeto de configuración que asocia los roles a sus respectivas rutas.
+// Objeto de configuración con llaves en MAYÚSCULAS para Match exacto con AuthContext Role
 export const NAVIGATION_CONFIG: Record<string, NavItemType[]> = {
-  admin: [
+  ADMINISTRADOR: [
     { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { to: '/admin/usuarios', label: 'Gestión de Usuarios', icon: Users },
     { to: '/admin/pnf', label: 'Gestión de PNF', icon: GraduationCap },
     { to: '/admin/auditoria', label: 'Auditoría', icon: History },
     { to: '/admin/seguridad', label: 'Roles y Permisos', icon: ShieldCheck },
   ],
-  coordinador: [
+  COORDINADOR: [
     { to: '/coordinador/dashboard', label: 'PNF', icon: GraduationCap },
   ],
-  auditor: [
+  AUDITOR: [
     { to: '/auditor/dashboard', label: 'Auditoría', icon: History },
   ],
-  estudiante: [
+  ESTUDIANTE: [
     { to: '/estudiante/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { to: '/estudiante/notas', label: 'Mis Notas', icon: GraduationCap },
     { to: '/estudiante/horarios', label: 'Horarios', icon: History },
   ],
-  docente: [
+  DOCENTE: [
     { to: '/docente/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   ],
 };
@@ -44,21 +44,16 @@ export const NAVIGATION_CONFIG: Record<string, NavItemType[]> = {
 export const getNavigationByRole = (role?: string | null): NavItemType[] => {
   if (!role) return [];
 
-  // Normalizamos a minúsculas y sin espacios
-  const normalizedRole = role.toLowerCase().trim();
+  // Normalizamos a MAYÚSCULAS para coincidir con la matriz de configuración
+  const normalizedRole = role.toUpperCase().trim();
 
-  // Búsqueda flexible: Cubre "ADMIN", "Administrador", "SuperAdmin", etc.
-  if (normalizedRole.includes('admin')) return NAVIGATION_CONFIG['admin'];
-  if (normalizedRole.includes('coordinador')) return NAVIGATION_CONFIG['coordinador'];
-  if (normalizedRole.includes('auditor')) return NAVIGATION_CONFIG['auditor'];
-  if (normalizedRole.includes('estudiante')) return NAVIGATION_CONFIG['estudiante'];
-  if (normalizedRole.includes('docente')) return NAVIGATION_CONFIG['docente'];
-
-  // Búsqueda por coincidencia exacta si se agregan roles no estandarizados
+  // Búsqueda directa por llave tipada
   if (NAVIGATION_CONFIG[normalizedRole]) {
     return NAVIGATION_CONFIG[normalizedRole];
   }
 
-  // Fallback seguro: Si no coincide ninguno, se retorna un arreglo vacío (o podrías tener un menú base)
+  // Fallback para administradores con variaciones de string (ej: "ADMIN")
+  if (normalizedRole.includes('ADMIN')) return NAVIGATION_CONFIG['ADMINISTRADOR'];
+
   return [];
 };
