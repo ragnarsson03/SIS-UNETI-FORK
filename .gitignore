@@ -1,0 +1,7 @@
+# Ignorar variables de entorno
+**/.env
+.env
+
+# Ignorar archivos locales de docker-compose para pruebas en la nube
+docker-compose.cloud.yml
+docker-compose.override.yml
