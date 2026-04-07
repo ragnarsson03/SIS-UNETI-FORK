@@ -2,6 +2,7 @@
 import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { AdminService } from './admin.service';
+import { AcademicoService } from '../academico/academico.service';
 import { CrearCoordinadorDto } from './dto/crear-coordinador.dto';
 import { CrearSecretarioDto } from './dto/crear-secretario.dto';
 import { CrearDocenteDto } from './dto/crear-docente.dto';
@@ -9,7 +10,10 @@ import { CrearEstudianteDto } from './dto/crear-estudiante.dto';
 
 @Controller('admin/usuarios')
 export class AdminController {
-  constructor(private readonly adminService: AdminService) {}
+  constructor(
+    private readonly adminService: AdminService,
+    private readonly academicoService: AcademicoService,
+  ) {}
 
   // ============================
   // COORDINADOR
@@ -65,5 +69,18 @@ export class AdminController {
   @MessagePattern('admin.crear-estudiante')
   async crearEstudianteMq(@Payload() dto: CrearEstudianteDto) {
     return this.adminService.crearEstudiante(dto);
+  }
+
+  // ============================
+  // CATÁLOGOS ACADÉMICOS
+  // ============================
+  @MessagePattern('academico.listar-pnfs')
+  async listarPnfsMq() {
+    return this.academicoService.listarPnfs();
+  }
+
+  @MessagePattern('academico.listar-cohortes')
+  async listarCohortesMq() {
+    return this.academicoService.listarCohortes();
   }
 }
