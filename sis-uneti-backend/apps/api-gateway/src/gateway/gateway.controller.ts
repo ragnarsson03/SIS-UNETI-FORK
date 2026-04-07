@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Get, Body, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { GatewayService } from './gateway.service';
 import { CrearUsuarioBaseDto } from './dto/crear-usuario.dto';
@@ -53,4 +53,27 @@ async crearDocente(@Body() dto: CrearDocenteDto) {
 async crearEstudiante(@Body() dto: CrearEstudianteDto) {
     return this.gatewayService.enviarComando('admin.crear-estudiante', dto);
 }
+}
+
+// ─────────────────────────────────────────────────────
+// Rutas públicas (autenticadas) de Catálogos Académicos
+// ─────────────────────────────────────────────────────
+@ApiTags('Catálogos Académicos')
+@Controller('api/academico')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth('access-token')
+export class AcademicoGatewayController {
+  constructor(private readonly gatewayService: GatewayService) {}
+
+  @Get('pnf')
+  @ApiOperation({ summary: 'Listar PNFs disponibles' })
+  async listarPnfs() {
+    return this.gatewayService.enviarComando('academico.listar-pnfs', {});
+  }
+
+  @Get('cohorte')
+  @ApiOperation({ summary: 'Listar Cohortes disponibles' })
+  async listarCohortes() {
+    return this.gatewayService.enviarComando('academico.listar-cohortes', {});
+  }
 }
