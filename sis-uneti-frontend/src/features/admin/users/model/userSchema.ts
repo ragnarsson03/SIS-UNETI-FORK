@@ -29,6 +29,17 @@ export const userRegisterSchema = z.object({
     .max(20, 'El teléfono no puede exceder 20 caracteres')
     .optional()
     .or(z.literal('')),
+  
+  // -- Tipos requeridos por el backend (Endpoint Estudiantes) -- 
+  // Opcionales en el frontend por ahora ya que serán inyectados como mock
+  pnfId: z.string().uuid('UUID inválido para PNF').optional(),
+  cohorteId: z.string().uuid('UUID inválido para Cohorte').optional(),
+  tipo_ingreso: z.enum(['OPSU', 'CONGRESO', 'CONVENIO', 'PARTICULAR', 'TRASLADO', 'REINGRESO']).optional(),
+  fecha_ingreso: z.string().optional(),
+  
+  // -- Tipos requeridos por el backend (Endpoint Docentes) --
+  categoria_academica: z.enum(['INSTRUCTOR', 'ASISTENTE', 'AGREGADO', 'ASOCIADO', 'TITULAR', 'JUBILADO']).optional(),
+  dedicacion: z.enum(['TIEMPO_COMPLETO', 'MEDIO_TIEMPO', 'TIEMPO_HORARIO', 'INVITADO']).optional(),
 });
 
 export type UserRegisterFormData = z.infer<typeof userRegisterSchema>;
