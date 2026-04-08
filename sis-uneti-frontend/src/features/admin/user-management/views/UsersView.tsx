@@ -1,32 +1,44 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { DataTable, Column } from '@/components/tables/DataTable';
 import { TableFilters } from '@/components/tables/TableFilters';
 import { WelcomeBanner } from '@/features/shared/components/WelcomeBanner';
-import { UserRegisterForm } from '@/features/admin/users/components/UserRegisterForm';
-import { UserStatsOverview } from '@/features/admin/users/components/UserStatsOverview';
-import { useUsers } from '@/features/admin/users/hooks/useUsers';
-import { UserData } from '@/types/user.types';
+import { UserModalForm } from '@/features/admin/user-management/components/UserModalForm';
+import { UserStatsOverview } from '@/features/admin/user-management/components/UserStatsOverview';
+import { useUserManagement } from '@/features/admin/user-management/hooks/useUserManagement';
+import { UnetiUser } from '@/features/admin/user-management/types';
 import { 
     UserPlus, 
     UserMinus, 
     FileUp, 
     Edit, 
     Key, 
-    Users
+    Users,
+    Loader2
 } from 'lucide-react';
 
 export function UsersView() {
     const { user } = useAuth();
-    const { filteredUsers, filterConfig, handleClearFilters } = useUsers();
-    const [isRegistering, setIsRegistering] = useState(false);
+    // Consumimos el hook que está enlazado a NestJS!
+    const { 
+        users, 
+        isLoading, 
+        error, 
+        isModalOpen, 
+        openModal, 
+        closeModal, 
+        handleSubmit,
+        filterConfig,
+        handleClearFilters
+    } = useUserManagement();
 
-    const columns: Column<UserData>[] = useMemo(() => [
+    // La UI exacta que amas con el estilo idéntico de renderizado
+    const columns: Column<UnetiUser>[] = useMemo(() => [
         {
             header: 'Usuario',
             key: 'nombre',
-            render: (u) => (
+            render: (u: UnetiUser) => (
                 <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-xl overflow-hidden shadow-sm border border-slate-100">
                         <img src={u.avatar} alt={u.nombre} className="w-full h-full object-cover" />
@@ -38,11 +50,19 @@ export function UsersView() {
                 </div>
             )
         },
-        { header: 'PNF', key: 'pnf', className: 'text-sm text-slate-600 font-medium' },
+        { 
+            header: 'PNF', 
+            key: 'pnf' as keyof UnetiUser, 
+            className: 'text-sm text-slate-600 font-medium',
+            render: (u: UnetiUser) => {
+                if ('pnf' in u) return u.pnf;
+                return <span className="text-slate-400 italic">-</span>;
+            }
+        },
         { 
             header: 'Rol', 
             key: 'rol',
-            render: (u) => (
+            render: (u: UnetiUser) => (
                 <span className={`
                     px-3 py-1 rounded-md text-[9px] font-bold uppercase tracking-widest
                     ${u.rol === 'ADMINISTRADOR' ? 'bg-red-50 text-red-600' : 
@@ -57,7 +77,7 @@ export function UsersView() {
         {
             header: 'Estado',
             key: 'estado',
-            render: (u) => (
+            render: (u: UnetiUser) => (
                 <div className="flex items-center gap-2">
                     <span className={`w-1.5 h-1.5 rounded-full ${u.estado === 'Activo' ? 'bg-green-500' : 'bg-slate-300'}`}></span>
                     <span className={`text-xs font-semibold ${u.estado === 'Activo' ? 'text-slate-600' : 'text-slate-500'}`}>{u.estado}</span>
@@ -67,7 +87,7 @@ export function UsersView() {
         { header: 'Última Conexión', key: 'ultimaConexion', className: 'text-xs text-slate-500' },
         {
             header: 'Acciones',
-            key: 'actions',
+            key: 'actions' as keyof UnetiUser,
             align: 'right',
             render: () => (
                 <div className="flex items-center justify-end gap-1">
@@ -99,35 +119,43 @@ export function UsersView() {
                             Carga Masiva
                         </Button>
                         <Button 
-                            onClick={() => setIsRegistering(!isRegistering)}
-                            className="bg-primary hover:bg-blue-600 text-white font-bold rounded-xl px-6 shadow-lg shadow-primary/30 flex gap-2 active:scale-95 transition-all"
+                            onClick={openModal}
+                            className="bg-primary hover:opacity-90 text-white font-bold rounded-xl px-6 shadow-lg shadow-primary/30 flex gap-2 active:scale-95 transition-all"
                         >
                             <UserPlus size={18} />
-                            {isRegistering ? 'Volver a la Lista' : 'Nuevo Usuario'}
+                            {isModalOpen ? 'Volver a la Lista' : 'Nuevo Usuario'}
                         </Button>
                     </div>
                 </div>
 
-                {isRegistering ? (
+                {isModalOpen ? (
                     <div className="mt-8">
-                        <UserRegisterForm 
-                            onCancel={() => setIsRegistering(false)} 
-                            onSuccess={() => {
-                                setIsRegistering(false);
-                                alert('Usuario registrado con éxito (Simulación)');
-                            }} 
+                        <UserModalForm 
+                            onClose={closeModal} 
+                            onSubmit={handleSubmit} 
                         />
                     </div>
                 ) : (
                     <>
                         <UserStatsOverview />
                         <div className="space-y-6">
-                            <TableFilters filters={filterConfig} onClear={handleClearFilters} />
-                            <DataTable 
-                                columns={columns} 
-                                data={filteredUsers} 
-                                emptyMessage="No se encontraron usuarios con esos filtros."
-                            />
+                            <TableFilters filters={filterConfig as any} onClear={handleClearFilters} />
+                            {isLoading ? (
+                                <div className="flex flex-col items-center justify-center py-20 text-slate-400">
+                                    <Loader2 className="animate-spin mb-4" size={32} />
+                                    <p className="text-sm font-bold uppercase tracking-widest">Sincronizando con backend...</p>
+                                </div>
+                            ) : error ? (
+                                <div className="py-20 text-center">
+                                   <p className="text-red-500 font-bold">{error}</p>
+                                </div>
+                            ) : (
+                                <DataTable 
+                                    columns={columns} 
+                                    data={users} 
+                                    emptyMessage="No se encontraron usuarios con esos filtros."
+                                />
+                            )}
                         </div>
                     </>
                 )}
