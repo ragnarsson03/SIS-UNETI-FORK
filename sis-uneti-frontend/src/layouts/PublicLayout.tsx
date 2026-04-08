@@ -1,7 +1,7 @@
 import { Outlet, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import NavbarPublico from '../components/publica/NavbarPublico';
-import FooterPublico from '../components/publica/FooterPublico';
+import NavbarPublico from '../shared/components/layout/NavbarPublico';
+import FooterPublico from '../shared/components/layout/FooterPublico';
 
 // PublicLayout: Wrapper para TODA la Zona Pública.
 // Navbar y Footer son persistentes en todas las rutas públicas.

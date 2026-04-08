@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
-import logoUneti from '../../assets/logo_uneti_fondo_blanco.jpeg';
+import logoUneti from '@/assets/logo_uneti_fondo_blanco.jpeg';
 
 const NAV_LINKS = [
   { path: '/', label: 'Inicio' },

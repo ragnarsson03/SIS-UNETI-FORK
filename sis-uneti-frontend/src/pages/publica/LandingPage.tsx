@@ -1,9 +1,9 @@
-import HeroSection from '../../components/publica/HeroSection';
-import ServicesSection from '../../components/publica/ServicesSection';
-import FaqSection from '../../components/publica/FaqSection';
+import HeroSection from '../../features/landing-portal/components/HeroSection';
+import ServicesSection from '../../features/landing-portal/components/ServicesSection';
+import FaqSection from '../../features/landing-portal/components/FaqSection';
 
 // Conservamos la sección de "Noticias" original que no estaba en el diseño de Sergio
-import noticiaImg from '../../assets/landing/Noticia1.jpg';
+import noticiaImg from '@/assets/landing/Noticia1.jpg';
 
 const NOTICIAS = [
   {

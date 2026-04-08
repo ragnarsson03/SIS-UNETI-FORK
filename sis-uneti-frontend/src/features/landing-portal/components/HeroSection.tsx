@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import heroBg from "../../assets/uneti hero/uneti_hero_bg.png";
+import heroBg from "@/assets/uneti hero/uneti_hero_bg.png";
 
 export default function HeroSection() {
   const navigate = useNavigate();

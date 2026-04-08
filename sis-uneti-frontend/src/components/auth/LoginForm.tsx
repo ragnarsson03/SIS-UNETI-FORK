@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth, Role } from '../../context/AuthContext';
-import unetiLogo from '../../assets/logo_uneti_fondo_blanco.jpeg';
+import unetiLogo from '@/assets/logo_uneti_fondo_blanco.jpeg';
 
 export default function LoginForm() {
     const [identifier, setIdentifier] = useState('');
