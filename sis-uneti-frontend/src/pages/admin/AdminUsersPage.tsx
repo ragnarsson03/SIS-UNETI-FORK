@@ -1,4 +1,4 @@
-import { UsersView } from '@/features/admin/users';
+import { UsersView } from '@/features/admin/user-management/views/UsersView';
 
 export default function AdminUsersPage() {
     return <UsersView />;

@@ -5,8 +5,10 @@ services:
       context: .
       dockerfile_inline: |
         FROM postgres:18-alpine
+        # Schema principal (estructura de tablas)
         COPY database/data_soberana.sql /docker-entrypoint-initdb.d/01_soberana.sql
-        COPY database/02_seed_usuarios.sql /docker-entrypoint-initdb.d/02_seed_usuarios.sql
+        # Seeders modulares: solo añade archivos a database/seeders/ para extender
+        COPY database/seeders/ /docker-entrypoint-initdb.d/
     container_name: sis_uneti_db
     environment:
       POSTGRES_DB: data_soberana

@@ -6,10 +6,13 @@ import { AdminModule } from './admin/admin.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { DocentesModule } from './docentes/docentes.module';
 import { EstudiantesModule } from './estudiantes/estudiantes.module';
+import { AcademicoModule } from './academico/academico.module';
 import { RedisModule } from './common/redis/redis.module';
 import { Usuario } from './usuarios/entidades/usuario.entity';
 import { Docente } from './docentes/docente.entity';
 import { Estudiante } from './estudiantes/estudiantes.entity';
+import { PnfCarrera } from './academico/entidades/pnf.entity';
+import { Cohorte } from './academico/entidades/cohorte.entity';
 
 // Si tienes RefreshToken, también impórtalo
 // import { RefreshToken } from './common/entidades/refresh-token.entity';
@@ -28,16 +31,17 @@ import { Estudiante } from './estudiantes/estudiantes.entity';
       password: process.env.DB_PASSWORD || 'postgres',
       database: process.env.DB_DATABASE || 'data_soberana',
       // ✅ Lista explícita de entidades
-      entities: [Usuario, Docente, Estudiante],
+      entities: [Usuario, Docente, Estudiante, PnfCarrera, Cohorte],
       synchronize: false,
       logging: process.env.NODE_ENV === 'development',
     }),
-    TypeOrmModule.forFeature([Usuario, Docente, Estudiante]), // ← Para que estén disponibles en los módulos
+    TypeOrmModule.forFeature([Usuario, Docente, Estudiante, PnfCarrera, Cohorte]),
     RedisModule,
     AdminModule,
     UsuariosModule,
     DocentesModule,
     EstudiantesModule,
+    AcademicoModule,
   ],
   controllers: [AppController],
 })

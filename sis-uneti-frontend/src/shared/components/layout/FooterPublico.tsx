@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Globe, AtSign, MapPin, Mail } from 'lucide-react';
-import logoUneti from '../../assets/logo_uneti_fondo_negro.jpeg';
+import logoUneti from '@/assets/logo_uneti_fondo_negro.jpeg';
 
 // Constantes de navegación para limpiar el JSX del Footer
 const LINKS_INSTITUCION = [

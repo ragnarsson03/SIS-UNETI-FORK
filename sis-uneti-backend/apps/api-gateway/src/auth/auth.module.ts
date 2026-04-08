@@ -6,13 +6,13 @@ import { AuthController } from './auth.controller';
 import { JwtStrategy } from './estrategias/jwt.strategy';
 import { JwtAuthGuard } from '../../../usuario-administrador/src/common/guardias/jwt-auth.guard';
 
-  @Module({
+@Module({
   imports: [
     // ✅ Para autenticación JWT
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'super-secret-key',
-      signOptions: { expiresIn: '15m' },
+      signOptions: { expiresIn: '1h' },
     }),
     // ✅ Para comunicación con Auth Service vía Redis
     ClientsModule.register([
@@ -30,4 +30,4 @@ import { JwtAuthGuard } from '../../../usuario-administrador/src/common/guardias
   providers: [JwtStrategy, JwtAuthGuard],  // ← Registrar la estrategia y el guard
   exports: [JwtAuthGuard],                 // ← Exportar para usar en otros módulos
 })
-export class AuthModule {}
+export class AuthModule { }

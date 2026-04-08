@@ -1,7 +1,7 @@
 // apps/api-gateway/src/gateway/gateway.module.ts
 import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { GatewayController } from './gateway.controller';
+import { GatewayController, AcademicoGatewayController } from './gateway.controller';
 import { GatewayService } from './gateway.service';
 
 @Module({
@@ -17,7 +17,7 @@ import { GatewayService } from './gateway.service';
       },
     ]),
   ],
-  controllers: [GatewayController],
+  controllers: [GatewayController, AcademicoGatewayController],
   providers: [GatewayService],
 })
 export class GatewayModule {}
