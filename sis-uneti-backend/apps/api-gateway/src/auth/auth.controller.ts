@@ -4,8 +4,7 @@ import {
   ServiceUnavailableException, GatewayTimeoutException,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { lastValueFrom, timeout, catchError, throwError } from 'rxjs';
-import { TimeoutError } from 'rxjs';
+import { lastValueFrom, timeout, catchError, throwError, TimeoutError } from 'rxjs';
 
 @Controller('auth')
 export class AuthController {

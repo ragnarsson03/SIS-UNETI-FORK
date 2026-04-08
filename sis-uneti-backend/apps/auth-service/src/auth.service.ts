@@ -1,8 +1,8 @@
-// apps/auth-service/src/auth.service.ts
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
-import { Usuario } from './entities/usuario.entity';
+import { JwtService } from '@nestjs/jwt';
+import { Usuario } from '../../usuario-administrador/src/usuarios/entidades/usuario.entity';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -11,11 +11,10 @@ export class AuthService {
         @InjectRepository(Usuario)
         private readonly usuarioRepo: Repository<Usuario>,
         private readonly dataSource: DataSource,
+        private readonly jwtService: JwtService,  // ← Inyectar JwtService
     ) { }
 
     async validarCredenciales(dto: { cedula: string; clave: string }) {
-        // Buscamos el usuario con JOIN a roles para obtener el código de rol
-        // sin depender de una columna 'rol' inexistente en seguridad.usuarios
         const resultado = await this.dataSource.query(
             `SELECT
                 u.id,
@@ -28,14 +27,13 @@ export class AuthService {
             LEFT JOIN seguridad.usuario_roles ur ON ur.usuario_id = u.id
             LEFT JOIN seguridad.roles r ON r.id = ur.rol_id
             WHERE u.cedula = $1
-              AND u.activo = true
+            AND u.activo = true
             LIMIT 1`,
             [dto.cedula]
         );
 
         const usuario = resultado[0];
 
-        // Validación de existencia y hash de contraseña
         if (!usuario || !(await bcrypt.compare(dto.clave, usuario.passwordHash))) {
             return {
                 success: false,
@@ -43,16 +41,24 @@ export class AuthService {
             };
         }
 
-        // Retorno de datos para el Gateway
+        // ✅ Generar JWT real
+        const payload = {
+            sub: usuario.id,
+            cedula: usuario.cedula,
+            rol: usuario.rol ?? 'ESTUDIANTE',
+        };
+
+        const accessToken = this.jwtService.sign(payload);
+
         return {
             success: true,
             user: {
                 id: usuario.id,
                 cedula: usuario.cedula,
-                rol: usuario.rol ?? 'ESTUDIANTE', // fallback si no tiene rol asignado
+                rol: usuario.rol ?? 'ESTUDIANTE',
                 nombre: `${usuario.nombre} ${usuario.apellido}`
             },
-            token: 'JWT_GENERADO_SIS_UNETI'
+            accessToken  // ← Cambiado de "token" a "accessToken"
         };
     }
 }
