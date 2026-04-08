@@ -1,15 +1,31 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #007BFF;
-  --color-primary-dark: #0c0939;
+  /* Paleta Oficial UNETI (Sergio's Design) */
+  --color-uneti-orange: #f36b21;
+  --color-uneti-blue: #00234E;
+  --color-uneti-green: #28a745;
+  --color-uneti-yellow: #ffc107;
+  --color-uneti-purple: #6b21a8;
+  
+  --color-primary: var(--color-uneti-orange);
+  --color-primary-dark: #cc5510;
+  --color-secondary: var(--color-uneti-blue);
+  
   --color-surface: #F8FAFC;
   --color-on-surface: #1E293B;
+  --color-background-light: #ffffff;
+  --color-background-dark: #020617;
   --color-outline: #E2E8F0;
 
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
-  --font-headline: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-headline: 'Lexend', ui-sans-serif, system-ui, sans-serif;
   --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Lexend', sans-serif;
+
+  --radius-button: 0.75rem;
+  --radius-card: 1.25rem;
+  --shadow-premium: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
 }
 
 @layer base {
@@ -31,3 +47,217 @@
     background-color: var(--color-surface);
   }
 }
+
+/* === SHARED UTILITIES (Tailwind v4 @utility) === */
+
+@utility glass-card {
+  @apply backdrop-blur-xl bg-white/70 border border-white/20 shadow-premium;
+}
+
+@utility rounded-card {
+  border-radius: var(--radius-card);
+}
+
+@utility rounded-button {
+  border-radius: var(--radius-button);
+}
+
+/* === MODULAR UTILITIES FROM PUBLICA === */
+
+@utility cta-bg {
+    background-image: radial-gradient(circle at 20% 50%, rgba(243, 107, 33, 0.4), transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(23, 162, 184, 0.3), transparent 50%);
+}
+
+@utility btn-cta-main {
+    @apply transition-all active:scale-95;
+}
+
+@utility btn-cta-alt {
+    @apply transition-all active:scale-95;
+}
+
+.dark .cta-banner {
+    @apply border border-white/5;
+}
+
+@utility faq-item {
+    @apply rounded-card border border-slate-100 overflow-hidden transition-all duration-300;
+    @apply bg-white shadow-sm hover:shadow-md;
+
+    .dark & {
+        @apply border-white/5 bg-slate-900;
+    }
+
+    &[open] {
+        @apply ring-2 ring-uneti-orange/20 border-uneti-orange/20;
+    }
+}
+
+@utility faq-trigger {
+    @apply flex items-center justify-between p-7 cursor-pointer list-none font-black text-xl text-uneti-blue;
+
+    .dark & {
+        @apply text-white;
+    }
+
+    span:first-child {
+        @apply flex items-center gap-4;
+
+        &::before {
+            content: "";
+            @apply size-2 rounded-full bg-uneti-orange;
+        }
+    }
+}
+
+@utility faq-content {
+    @apply px-7 pb-7 pt-0 text-slate-700 leading-relaxed text-[15px] font-medium;
+
+    .dark & {
+        @apply text-slate-300;
+    }
+}
+
+@utility faq-icon {
+    @apply text-uneti-orange transition-transform duration-300;
+}
+
+.faq-item[open] .faq-icon {
+    @apply rotate-180;
+}
+
+@utility category-btn {
+    @apply font-black text-slate-700 dark:text-slate-300 transition-all;
+    
+    &.active {
+        @apply bg-uneti-blue text-white shadow-xl shadow-uneti-blue/20;
+    }
+}
+
+.dark .category-btn.active {
+    @apply bg-uneti-orange text-white shadow-uneti-orange/20;
+}
+
+@utility header-container {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    @apply transition-all duration-300;
+}
+
+@utility header-scrolled {
+    @apply glass-card shadow-2xl border-b border-white/10;
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(20px) !important;
+}
+
+.dark .header-scrolled {
+    background-color: rgba(2, 6, 23, 0.9) !important;
+}
+
+@utility logo-box {
+    @apply transition-transform;
+}
+
+@utility logo-text {
+    @apply transition-colors;
+}
+
+@utility nav-link {
+    @apply relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-uneti-orange after:transition-all hover:after:w-full;
+}
+
+@utility btn-login {
+    @apply transition-all active:scale-95;
+}
+
+@utility hero-container {
+    @apply relative w-full flex items-center overflow-hidden bg-uneti-blue;
+}
+
+@utility hero-bg-image {
+    @apply w-full h-full object-cover opacity-40 mix-blend-overlay scale-110;
+    animation: hero-zoom 20s infinite alternate;
+}
+
+@keyframes hero-zoom {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(1.15);
+    }
+}
+
+@utility hero-badge {
+    @apply inline-flex items-center gap-3 px-4 py-2 rounded-card glass-card border-uneti-orange/30 text-white text-[10px] font-black uppercase tracking-[0.2em] mb-8 w-fit shadow-xl;
+}
+
+@utility btn-primary {
+    @apply transition-all active:scale-95;
+}
+
+@utility btn-secondary {
+    @apply transition-all active:scale-95;
+}
+
+@utility hero-status-card {
+    @apply glass-card p-6 rounded-card border-white/10 hidden lg:block max-w-sm ml-auto;
+}
+
+@utility animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .hero-container {
+        @apply min-h-screen py-20;
+    }
+}
+
+@utility service-card {
+    &::before {
+        content: "";
+        @apply absolute top-0 left-0 w-1.5 h-full transition-all duration-500;
+        border-radius: var(--radius-card);
+        background-color: var(--accent-color, #f36b21);
+    }
+}
+
+@utility service-icon-bg {
+    background-color: color-mix(in srgb, var(--accent-color, #f36b21), transparent 90%);
+    color: var(--accent-color, #f36b21);
+}
+
+.service-card:hover .service-icon-bg {
+    @apply scale-110 rotate-3;
+    background-color: var(--accent-color, #f36b21);
+    @apply text-white;
+}
+
+@utility service-link {
+    color: var(--accent-color, #f36b21);
+}
+
+.service-link:hover {
+    @apply gap-4;
+}
+
+.dark .service-card {
+    @apply bg-slate-900 border-slate-800;
+}
+
