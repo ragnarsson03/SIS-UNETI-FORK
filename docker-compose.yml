@@ -68,7 +68,8 @@ services:
       PORT: 3000
       JWT_SECRET: ${JWT_SECRET:-super-secret-key-change-in-production}
     env_file:
-      - ./sis-uneti-backend/.env
+      - path: ./sis-uneti-backend/.env
+        required: false
     networks:
       - sis-uneti-network
     restart: unless-stopped
@@ -104,7 +105,8 @@ services:
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-super-secret-refresh-key-change-in-production}
       NODE_ENV: ${NODE_ENV:-development}
     env_file:
-      - ./sis-uneti-backend/.env
+      - path: ./sis-uneti-backend/.env
+        required: false
     networks:
       - sis-uneti-network
     restart: unless-stopped
@@ -138,7 +140,8 @@ services:
       # Servicio
       NODE_ENV: ${NODE_ENV:-development}
     env_file:
-      - ./sis-uneti-backend/.env
+      - path: ./sis-uneti-backend/.env
+        required: false
     networks:
       - sis-uneti-network
     restart: unless-stopped
@@ -167,3 +170,4 @@ networks:
   sis-uneti-network:
     name: sis_uneti_network  # ✅ Nombre explícito para la red
     driver: bridge
+    
