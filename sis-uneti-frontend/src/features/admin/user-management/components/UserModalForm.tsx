@@ -1,105 +1,215 @@
 import { useState } from 'react';
-import { UnetiRole } from '../types';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { userRegisterSchema, type UserRegisterFormData, TIPO_INGRESO, CATEGORIA_ACADEMICA, DEDICACION } from '../model/userSchema';
 
-interface UserModalFormProps {
-    onClose: () => void;
-    onSubmit: (data: any) => void;
+interface UserRegisterFormProps {
+  onSubmitUser: (data: UserRegisterFormData) => Promise<void>;
+  onSuccess?: () => void;
+  onCancel?: () => void;
 }
 
-export const UserModalForm = ({ onClose, onSubmit }: UserModalFormProps) => {
-    const [rol, setRol] = useState<UnetiRole>('ESTUDIANTE');
+export function UserRegisterForm({ onSubmitUser, onSuccess, onCancel }: UserRegisterFormProps) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
 
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
-            <div className="glass-card rounded-card w-full max-w-2xl bg-white/95 dark:bg-slate-900/95 shadow-2xl border border-white/20 p-8 relative animate-in fade-in zoom-in-95 duration-200">
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<UserRegisterFormData>({
+    resolver: zodResolver(userRegisterSchema),
+    mode: 'onTouched',
+    reValidateMode: 'onSubmit',
+    defaultValues: {
+      rol: 'estudiante'
+    }
+  });
 
-                <button onClick={onClose} className="absolute top-6 right-6 text-slate-400 hover:text-uneti-orange transition-colors font-black text-xl">✕</button>
-                <h2 className="text-2xl font-black text-uneti-blue dark:text-white mb-6">Registrar Usuario</h2>
+  const rol = watch('rol');
 
-                <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); onSubmit({}); }}>
-                    {/* Fila 1: Datos Base */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Nombre Completo</label>
-                            <input type="text" className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-uneti-blue/50 outline-none" placeholder="Ej. Ana Pérez" />
-                        </div>
-                        <div>
-                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Correo Institucional</label>
-                            <input type="email" className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-uneti-blue/50 outline-none" placeholder="a.perez@uneti.edu.ve" />
-                        </div>
-                    </div>
+  const onSubmit = async (data: UserRegisterFormData) => {
+    setIsLoading(true);
+    setServerError(null);
 
-                    {/* Fila 2: Selector Dinámico */}
-                    <div className="border-t border-slate-100 dark:border-white/5 pt-6 mt-6">
-                        <label className="block text-xs font-bold text-uneti-orange uppercase tracking-widest mb-3">Rol Académico/Administrativo</label>
-                        <select
-                            value={rol}
-                            onChange={(e) => setRol(e.target.value as UnetiRole)}
-                            className="w-full bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-uneti-blue dark:text-white focus:border-uneti-orange outline-none transition-all cursor-pointer shadow-sm"
-                        >
-                            <option value="ESTUDIANTE">🎓 ESTUDIANTE</option>
-                            <option value="DOCENTE">📖 DOCENTE</option>
-                            <option value="ADMINISTRADOR">🛡️ ADMINISTRADOR</option>
-                            <option value="COORDINADOR">📋 COORDINADOR</option>
-                            <option value="SECRETARIO">🖋️ SECRETARIO</option>
-                        </select>
-                    </div>
+    try {
+      await onSubmitUser(data);
+      alert('¡Usuario guardado con éxito!'); // Feedback de éxito UI
+      if (onSuccess) onSuccess();
+    } catch (error: any) {
+      setServerError(error.message || 'Error al conectar con servidor.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-                    {/* Renderizado Dinámico */}
-                    <div className="p-5 bg-slate-50 dark:bg-slate-800/30 rounded-2xl border border-slate-100 dark:border-white/5 shadow-inner">
+  return (
+    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 max-w-2xl mx-auto">
+      <div className="mb-6">
+        <h2 className="text-xl font-bold text-slate-800">Registro de Nuevo Usuario</h2>
+        <p className="text-sm text-slate-500 mt-1">Acople de datos hacia el Gateway bajo estándar FSD</p>
+      </div>
 
-                        {rol === 'ESTUDIANTE' && (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in">
-                                <div className="md:col-span-2 lg:col-span-1">
-                                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">PNF</label>
-                                    <select className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm outline-none">
-                                        <option>Informática</option>
-                                        <option>Telecomunicaciones</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Cohorte</label>
-                                    <input type="text" className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm outline-none" placeholder="2026-I" />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Estado SocioE.</label>
-                                    <select className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm outline-none">
-                                        <option>A</option><option>B</option><option>C</option>
-                                    </select>
-                                </div>
-                            </div>
-                        )}
-
-                        {rol === 'DOCENTE' && (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in">
-                                <div>
-                                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Escalafón</label>
-                                    <select className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm font-bold text-uneti-orange outline-none">
-                                        <option>Instructor</option><option>Asistente</option><option>Agregado</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Carga Horaria Max.</label>
-                                    <input type="number" className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm outline-none" placeholder="Ej. 16 Hrs" />
-                                </div>
-                            </div>
-                        )}
-
-                        {(rol === 'ADMINISTRADOR' || rol === 'COORDINADOR' || rol === 'SECRETARIO') && (
-                            <div className="text-center py-4 animate-in fade-in">
-                                <span className="material-symbols-outlined text-4xl text-uneti-purple/40 mb-2">admin_panel_settings</span>
-                                <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Privilegios Administrativos Activos</p>
-                            </div>
-                        )}
-
-                    </div>
-
-                    <div className="flex justify-end gap-4 pt-4">
-                        <button type="button" onClick={onClose} className="px-6 py-3 rounded-xl font-bold text-slate-500 hover:bg-slate-100 transition-colors">Cancelar</button>
-                        <button type="submit" className="px-8 py-3 bg-uneti-blue text-white rounded-xl font-black shadow-lg shadow-uneti-blue/30 hover:bg-uneti-orange hover:shadow-uneti-orange/40 transition-all">Registrar Sistema</button>
-                    </div>
-                </form>
-            </div>
+      {serverError && (
+        <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-md">
+          <p className="text-sm font-medium">{serverError}</p>
         </div>
-    );
-};
+      )}
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+
+        {/* Selector de Rol Modularizado */}
+        <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
+          <label className="block text-sm font-semibold text-primary-dark mb-2">Rol dentro del Sistema UNETI</label>
+          <select
+            {...register('rol')}
+            className={`w-full p-2.5 bg-white border rounded-lg outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium text-slate-700 ${errors.rol ? 'border-red-500 focus:border-red-500' : 'border-slate-300 focus:border-primary'}`}
+          >
+            <option value="estudiante">Estudiante Académico</option>
+            <option value="docente">Docente / Profesor</option>
+            <option value="coordinador">Coordinador de PNF</option>
+            <option value="secretario">Secretariado Académico</option>
+          </select>
+          {errors.rol && <span className="text-red-500 text-xs font-medium mt-1 block">{errors.rol.message}</span>}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Nombres */}
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 mb-1">Nombres</label>
+            <input
+              {...register('nombres')}
+              className={`w-full p-2.5 border rounded-lg outline-none focus:ring-2 focus:ring-primary/20 transition-all ${errors.nombres ? 'border-red-500 focus:border-red-500' : 'border-slate-300 focus:border-primary'}`}
+            />
+            {errors.nombres && <span className="text-red-500 text-xs font-medium mt-1 block">{errors.nombres.message}</span>}
+          </div>
+
+          {/* Apellidos */}
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 mb-1">Apellidos</label>
+            <input
+              {...register('apellidos')}
+              className={`w-full p-2.5 border rounded-lg outline-none focus:ring-2 focus:ring-primary/20 transition-all ${errors.apellidos ? 'border-red-500 focus:border-red-500' : 'border-slate-300 focus:border-primary'}`}
+            />
+            {errors.apellidos && <span className="text-red-500 text-xs font-medium mt-1 block">{errors.apellidos.message}</span>}
+          </div>
+
+          {/* Cédula */}
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 mb-1">Cédula</label>
+            <input
+              {...register('cedula')}
+              className={`w-full p-2.5 border rounded-lg outline-none focus:ring-2 focus:ring-primary/20 transition-all ${errors.cedula ? 'border-red-500 focus:border-red-500' : 'border-slate-300 focus:border-primary'}`}
+            />
+            {errors.cedula && <span className="text-red-500 text-xs font-medium mt-1 block">{errors.cedula.message}</span>}
+          </div>
+
+          {/* Teléfono */}
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 mb-1">Teléfono</label>
+            <input
+              {...register('telefono')}
+              className={`w-full p-2.5 border rounded-lg outline-none focus:ring-2 focus:ring-primary/20 transition-all ${errors.telefono ? 'border-red-500 focus:border-red-500' : 'border-slate-300 focus:border-primary'}`}
+            />
+            {errors.telefono && <span className="text-red-500 text-xs font-medium mt-1 block">{errors.telefono.message}</span>}
+          </div>
+
+          {/* Email Principal */}
+          <div className="md:col-span-2">
+            <label className="block text-sm font-semibold text-slate-700 mb-1">Correo Electrónico Principal</label>
+            <input
+              type="email"
+              autoComplete="username"
+              {...register('email')}
+              className={`w-full p-2.5 border rounded-lg outline-none focus:ring-2 focus:ring-primary/20 transition-all ${errors.email ? 'border-red-500 focus:border-red-500' : 'border-slate-300 focus:border-primary'}`}
+            />
+            {errors.email && <span className="text-red-500 text-xs font-medium mt-1 block">{errors.email.message}</span>}
+          </div>
+
+          {/* Contraseña */}
+          <div className="md:col-span-2">
+            <label className="block text-sm font-semibold text-slate-700 mb-1">Contraseña de Acceso</label>
+            <input
+              type="password"
+              autoComplete="new-password"
+              {...register('password')}
+              className={`w-full p-2.5 border rounded-lg outline-none focus:ring-2 focus:ring-primary/20 transition-all ${errors.password ? 'border-red-500 focus:border-red-500' : 'border-slate-300 focus:border-primary'}`}
+            />
+            {errors.password && <span className="text-red-500 text-xs font-medium mt-1 block">{errors.password.message}</span>}
+          </div>
+
+          {/* -- MODULARIZACIÓN: CAMPOS ACADÉMICOS INYECTADOS AQUÍ MISMOS SIN ROMPER LAYOUT -- */}
+          {rol === 'estudiante' && (
+            <>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">PNF Asignado</label>
+                <select {...register('pnfId' as any)} className={`w-full p-2.5 border rounded-lg outline-none focus:ring-2 focus:ring-primary/20 transition-all ${(errors as any).pnfId ? 'border-red-500 focus:border-red-500' : 'border-slate-300 focus:border-primary'}`}>
+                  <option value="">Seleccionar...</option>
+                  <option value="f98195e8-b822-44d5-9566-27cfc5612bd2">PNF en Informática</option>
+                  <option value="a76295e8-b822-44d5-9566-27cfc5612bd9">PNF en Telecomunicaciones</option>
+                </select>
+                {(errors as any).pnfId && <span className="text-red-500 text-xs font-medium mt-1 block">{(errors as any).pnfId.message}</span>}
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Cohorte</label>
+                <select {...register('cohorteId' as any)} className={`w-full p-2.5 border rounded-lg outline-none focus:ring-2 focus:ring-primary/20 transition-all ${(errors as any).cohorteId ? 'border-red-500 focus:border-red-500' : 'border-slate-300 focus:border-primary'}`}>
+                  <option value="">Seleccionar...</option>
+                  <option value="f1b2c3d4-e5f6-47a8-9b0c-1d2e3f4a5b6c">2026-I</option>
+                </select>
+                {(errors as any).cohorteId && <span className="text-red-500 text-xs font-medium mt-1 block">{(errors as any).cohorteId.message}</span>}
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Tipo de Ingreso</label>
+                <select {...register('tipo_ingreso' as any)} className={`w-full p-2.5 border rounded-lg outline-none focus:ring-2 focus:ring-primary/20 transition-all ${(errors as any).tipo_ingreso ? 'border-red-500 focus:border-red-500' : 'border-slate-300 focus:border-primary'}`}>
+                  <option value="">Seleccionar...</option>
+                  {TIPO_INGRESO.map(t => <option key={t} value={t}>{t}</option>)}
+                </select>
+                {(errors as any).tipo_ingreso && <span className="text-red-500 text-xs font-medium mt-1 block">{(errors as any).tipo_ingreso.message}</span>}
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Fecha de Ingreso</label>
+                <input type="date" {...register('fecha_ingreso' as any)} className={`w-full p-2.5 border rounded-lg outline-none focus:ring-2 focus:ring-primary/20 transition-all ${(errors as any).fecha_ingreso ? 'border-red-500 focus:border-red-500' : 'border-slate-300 focus:border-primary'}`} />
+                {(errors as any).fecha_ingreso && <span className="text-red-500 text-xs font-medium mt-1 block">{(errors as any).fecha_ingreso.message}</span>}
+              </div>
+            </>
+          )}
+
+          {rol === 'docente' && (
+            <>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Categoría Académica</label>
+                <select {...register('categoria_academica' as any)} className={`w-full p-2.5 border rounded-lg outline-none focus:ring-2 focus:ring-primary/20 transition-all ${(errors as any).categoria_academica ? 'border-red-500 focus:border-red-500' : 'border-slate-300 focus:border-primary'}`}>
+                  <option value="">Seleccionar...</option>
+                  {CATEGORIA_ACADEMICA.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+                {(errors as any).categoria_academica && <span className="text-red-500 text-xs font-medium mt-1 block">{(errors as any).categoria_academica.message}</span>}
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Dedicación</label>
+                <select {...register('dedicacion' as any)} className={`w-full p-2.5 border rounded-lg outline-none focus:ring-2 focus:ring-primary/20 transition-all ${(errors as any).dedicacion ? 'border-red-500 focus:border-red-500' : 'border-slate-300 focus:border-primary'}`}>
+                  <option value="">Seleccionar...</option>
+                  {DEDICACION.map(d => <option key={d} value={d}>{d}</option>)}
+                </select>
+                {(errors as any).dedicacion && <span className="text-red-500 text-xs font-medium mt-1 block">{(errors as any).dedicacion.message}</span>}
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Botones de acción */}
+        <div className="flex justify-end gap-3 pt-6 border-t border-slate-100">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="px-5 py-2 border border-slate-300 rounded-lg text-slate-700 font-medium hover:bg-slate-50 active:scale-95 transition-all"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="px-5 py-2 bg-primary text-white font-medium rounded-lg hover:bg-blue-600 shadow-md shadow-primary/20 active:scale-95 transition-all disabled:opacity-50 disabled:pointer-events-none flex items-center"
+          >
+            {isLoading ? 'Registrando en Gateway...' : 'Registrar Usuario'}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}

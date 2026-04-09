@@ -1,68 +1,59 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { DataTable, Column } from '@/components/tables/DataTable';
 import { TableFilters } from '@/components/tables/TableFilters';
 import { WelcomeBanner } from '@/features/shared/components/WelcomeBanner';
-import { UserModalForm } from '@/features/admin/user-management/components/UserModalForm';
-import { UserStatsOverview } from '@/features/admin/user-management/components/UserStatsOverview';
-import { useUserManagement } from '@/features/admin/user-management/hooks/useUserManagement';
-import { UnetiUser } from '@/features/admin/user-management/types';
+import { UserRegisterForm } from '../components/UserModalForm';
+import { UserStatsOverview } from '../components/UserStatsOverview';
+import { useUserManagement } from '../hooks/useUserManagement';
+import { UserData } from '@/types/user.types';
 import { 
     UserPlus, 
     UserMinus, 
     FileUp, 
     Edit, 
     Key, 
-    Users,
-    Loader2
+    Users
 } from 'lucide-react';
 
 export function UsersView() {
     const { user } = useAuth();
-    // Consumimos el hook que está enlazado a NestJS!
-    const { 
-        users, 
-        isLoading, 
-        error, 
-        isModalOpen, 
-        openModal, 
-        closeModal, 
-        handleSubmit,
-        filterConfig,
-        handleClearFilters
-    } = useUserManagement();
+    const { filteredUsers, filterConfig, handleClearFilters, isLoading, error, fetchUsers, registerNewUser } = useUserManagement();
+    const [isRegistering, setIsRegistering] = useState(false);
 
-    // La UI exacta que amas con el estilo idéntico de renderizado
-    const columns: Column<UnetiUser>[] = useMemo(() => [
+    const columns: Column<UserData>[] = useMemo(() => [
         {
             header: 'Usuario',
             key: 'nombre',
-            render: (u: UnetiUser) => (
-                <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl overflow-hidden shadow-sm border border-slate-100">
-                        <img src={u.avatar} alt={u.nombre} className="w-full h-full object-cover" />
+            render: (u) => {
+                const initials = u.nombre
+                    ? u.nombre.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()
+                    : '?';
+                return (
+                    <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-xl overflow-hidden shadow-sm border border-slate-100 flex-shrink-0">
+                            {u.avatar ? (
+                                <img src={u.avatar} alt={u.nombre} className="w-full h-full object-cover" />
+                            ) : (
+                                <div className="w-full h-full bg-gradient-to-br from-primary/80 to-blue-700 flex items-center justify-center text-white text-xs font-bold">
+                                    {initials}
+                                </div>
+                            )}
+                        </div>
+                        <div>
+                            <h3 className="text-sm font-bold text-primary-dark">{u.nombre}</h3>
+                            <p className="text-[11px] text-slate-500">{u.correo}</p>
+                        </div>
                     </div>
-                    <div>
-                        <h3 className="text-sm font-bold text-primary-dark">{u.nombre}</h3>
-                        <p className="text-[11px] text-slate-500">{u.correo}</p>
-                    </div>
-                </div>
-            )
-        },
-        { 
-            header: 'PNF', 
-            key: 'pnf' as keyof UnetiUser, 
-            className: 'text-sm text-slate-600 font-medium',
-            render: (u: UnetiUser) => {
-                if ('pnf' in u) return u.pnf;
-                return <span className="text-slate-400 italic">-</span>;
+                );
             }
         },
+        { header: 'PNF', key: 'pnf', className: 'text-sm text-slate-600 font-medium' },
         { 
             header: 'Rol', 
             key: 'rol',
-            render: (u: UnetiUser) => (
+            render: (u) => (
                 <span className={`
                     px-3 py-1 rounded-md text-[9px] font-bold uppercase tracking-widest
                     ${u.rol === 'ADMINISTRADOR' ? 'bg-red-50 text-red-600' : 
@@ -77,7 +68,7 @@ export function UsersView() {
         {
             header: 'Estado',
             key: 'estado',
-            render: (u: UnetiUser) => (
+            render: (u) => (
                 <div className="flex items-center gap-2">
                     <span className={`w-1.5 h-1.5 rounded-full ${u.estado === 'Activo' ? 'bg-green-500' : 'bg-slate-300'}`}></span>
                     <span className={`text-xs font-semibold ${u.estado === 'Activo' ? 'text-slate-600' : 'text-slate-500'}`}>{u.estado}</span>
@@ -87,7 +78,7 @@ export function UsersView() {
         { header: 'Última Conexión', key: 'ultimaConexion', className: 'text-xs text-slate-500' },
         {
             header: 'Acciones',
-            key: 'actions' as keyof UnetiUser,
+            key: 'actions',
             align: 'right',
             render: () => (
                 <div className="flex items-center justify-end gap-1">
@@ -119,41 +110,44 @@ export function UsersView() {
                             Carga Masiva
                         </Button>
                         <Button 
-                            onClick={openModal}
-                            className="bg-primary hover:opacity-90 text-white font-bold rounded-xl px-6 shadow-lg shadow-primary/30 flex gap-2 active:scale-95 transition-all"
+                            onClick={() => setIsRegistering(!isRegistering)}
+                            className="bg-primary hover:bg-blue-600 text-white font-bold rounded-xl px-6 shadow-lg shadow-primary/30 flex gap-2 active:scale-95 transition-all"
                         >
                             <UserPlus size={18} />
-                            {isModalOpen ? 'Volver a la Lista' : 'Nuevo Usuario'}
+                            {isRegistering ? 'Volver a la Lista' : 'Nuevo Usuario'}
                         </Button>
                     </div>
                 </div>
 
-                {isModalOpen ? (
+                {isRegistering ? (
                     <div className="mt-8">
-                        <UserModalForm 
-                            onClose={closeModal} 
-                            onSubmit={handleSubmit} 
+                        <UserRegisterForm 
+                            onSubmitUser={registerNewUser}
+                            onCancel={() => setIsRegistering(false)} 
+                            onSuccess={() => {
+                                setIsRegistering(false);
+                                fetchUsers();
+                            }} 
                         />
                     </div>
                 ) : (
                     <>
                         <UserStatsOverview />
                         <div className="space-y-6">
-                            <TableFilters filters={filterConfig as any} onClear={handleClearFilters} />
+                            <TableFilters filters={filterConfig} onClear={handleClearFilters} />
+                            {error && (
+                                <div className="p-4 bg-red-50 text-red-600 rounded-xl border border-red-200">
+                                    <p className="font-semibold text-sm">{error}</p>
+                                    <p className="text-xs mt-1 text-red-500">Nota: El Gateway posiblemente aún no exponga el listado de usuarios.</p>
+                                </div>
+                            )}
                             {isLoading ? (
-                                <div className="flex flex-col items-center justify-center py-20 text-slate-400">
-                                    <Loader2 className="animate-spin mb-4" size={32} />
-                                    <p className="text-sm font-bold uppercase tracking-widest">Sincronizando con backend...</p>
-                                </div>
-                            ) : error ? (
-                                <div className="py-20 text-center">
-                                   <p className="text-red-500 font-bold">{error}</p>
-                                </div>
+                                <div className="flex justify-center p-10 font-medium text-slate-500 text-sm">Cargando usuarios desde el Gateway...</div>
                             ) : (
                                 <DataTable 
                                     columns={columns} 
-                                    data={users} 
-                                    emptyMessage="No se encontraron usuarios con esos filtros."
+                                    data={filteredUsers} 
+                                    emptyMessage="No se encontraron usuarios o el servidor devolvió una lista vacía."
                                 />
                             )}
                         </div>

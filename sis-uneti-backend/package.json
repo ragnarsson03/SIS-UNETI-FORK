@@ -1,6 +1,19 @@
 {
   "name": "sis-uneti-backend",
   "version": "1.0.0",
+  "scripts": {
+    "build": "nest build",
+    "start": "nest start",
+    "start:dev": "nest start --watch",
+    "start:debug": "nest start --debug --watch",
+    "start:prod": "node dist/apps/api-gateway/main",
+    "start:gateway": "nest start api-gateway --watch",
+    "start:auth": "nest start auth-service --watch",
+    "start:admin": "nest start usuario-administrador --watch",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage"
+  },
   "dependencies": {
     "@nestjs/axios": "^4.0.1",
     "@nestjs/common": "^11.0.0",
