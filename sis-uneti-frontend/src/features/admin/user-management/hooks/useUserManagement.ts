@@ -1,100 +1,59 @@
-import { useState, useEffect, useMemo } from 'react';
-import { UnetiUser } from '../types';
-import { userService } from '../services/userService';
+import { useState } from 'react';
+import { MOCK_USERS } from '../data/users.mock';
+import { UserData } from '@/types/user.types';
 import { TableFilterConfig } from '@/components/tables/TableFilters';
 
-export const useUserManagement = () => {
-    const [users, setUsers] = useState<UnetiUser[]>([]);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+export function useUsers() {
+    const [searchTerm, setSearchTerm] = useState('');
+    const [roleFilter, setRoleFilter] = useState('all');
+    const [statusFilter, setStatusFilter] = useState('all');
 
-    // Filtros
-    const [rolFilter, setRolFilter] = useState<string>('');
-    const [estadoFilter, setEstadoFilter] = useState<string>('');
-
-    const openModal = () => setIsModalOpen(true);
-    const closeModal = () => setIsModalOpen(false);
-
-    const fetchUsers = async () => {
-        try {
-            setIsLoading(true);
-            const data = await userService.getUsers();
-            setUsers(data || []);
-            setError(null);
-        } catch (err) {
-            setUsers([]);
-            setError('Error al obtener la lista de usuarios. El backend parece estar inactivo.');
-            console.error("User fetch error:", err);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchUsers();
-    }, []);
-
-    const handleSubmit = async (data: Partial<UnetiUser>) => {
-        try {
-            await userService.createUser(data);
-            alert('¡Usuario registrado satisfactoriamente en SIS-UNETI!');
-            closeModal();
-            fetchUsers();
-        } catch (err) {
-            console.error("Error creating user:", err);
-            alert('Hubo un error al registrar el usuario.');
-        }
-    };
-
-    const handleClearFilters = () => {
-        setRolFilter('');
-        setEstadoFilter('');
-    };
+    const filteredUsers = MOCK_USERS.filter((user: UserData) => {
+        const matchesSearch = user.nombre?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                                user.correo?.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesRole = roleFilter === 'all' || user.rol === roleFilter;
+        const matchesStatus = statusFilter === 'all' || user.estado === statusFilter;
+        return matchesSearch && matchesRole && matchesStatus;
+    });
 
     const filterConfig: TableFilterConfig[] = [
         {
-            name: 'rol',
-            label: 'Filtrar por Rol',
+            name: 'role',
+            label: 'Rol',
+            value: roleFilter,
+            onChange: setRoleFilter,
             options: [
-                { label: 'Todos los Roles', value: '' },
-                { label: 'ADMINISTRADOR', value: 'ADMINISTRADOR' },
-                { label: 'DOCENTE', value: 'DOCENTE' },
-                { label: 'ESTUDIANTE', value: 'ESTUDIANTE' }
-            ],
-            value: rolFilter,
-            onChange: setRolFilter
+                { label: 'Todos los roles', value: 'all' },
+                { label: 'Administrador', value: 'ADMINISTRADOR' },
+                { label: 'Docente', value: 'DOCENTE' },
+                { label: 'Coordinador', value: 'COORDINADOR' },
+                { label: 'Auditor', value: 'AUDITOR' },
+            ]
         },
         {
-            name: 'estado',
-            label: 'Filtrar por Estado',
+            name: 'status',
+            label: 'Estado',
+            value: statusFilter,
+            onChange: setStatusFilter,
             options: [
-                { label: 'Todos los Estados', value: '' },
+                { label: 'Todos los estados', value: 'all' },
                 { label: 'Activo', value: 'Activo' },
-                { label: 'Inactivo', value: 'Inactivo' }
-            ],
-            value: estadoFilter,
-            onChange: setEstadoFilter
+                { label: 'Inactivo', value: 'Inactivo' },
+            ]
         }
     ];
 
-    const filteredUsers = useMemo(() => {
-        return users.filter(user => {
-            if (rolFilter && user.rol !== rolFilter) return false;
-            if (estadoFilter && user.estado !== estadoFilter) return false;
-            return true;
-        });
-    }, [users, rolFilter, estadoFilter]);
+    const handleClearFilters = () => {
+        setSearchTerm('');
+        setRoleFilter('all');
+        setStatusFilter('all');
+    };
 
-    return { 
-        users: filteredUsers, 
-        isLoading, 
-        error, 
-        isModalOpen, 
-        openModal, 
-        closeModal, 
-        handleSubmit,
+    return {
+        filteredUsers,
+        searchTerm,
+        setSearchTerm,
         filterConfig,
         handleClearFilters
     };
-};
+}
