@@ -6,7 +6,7 @@ import { TableFilters } from '@/components/tables/TableFilters';
 import { WelcomeBanner } from '@/features/shared/components/WelcomeBanner';
 import { UserRegisterForm } from '../components/UserModalForm';
 import { UserStatsOverview } from '../components/UserStatsOverview';
-import { useUsers } from '../hooks/useUserManagement';
+import { useUserManagement } from '../hooks/useUserManagement';
 import { UserData } from '@/types/user.types';
 import { 
     UserPlus, 
@@ -19,24 +19,35 @@ import {
 
 export function UsersView() {
     const { user } = useAuth();
-    const { filteredUsers, filterConfig, handleClearFilters } = useUsers();
+    const { filteredUsers, filterConfig, handleClearFilters, isLoading, error, fetchUsers, registerNewUser } = useUserManagement();
     const [isRegistering, setIsRegistering] = useState(false);
 
     const columns: Column<UserData>[] = useMemo(() => [
         {
             header: 'Usuario',
             key: 'nombre',
-            render: (u) => (
-                <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl overflow-hidden shadow-sm border border-slate-100">
-                        <img src={u.avatar} alt={u.nombre} className="w-full h-full object-cover" />
+            render: (u) => {
+                const initials = u.nombre
+                    ? u.nombre.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()
+                    : '?';
+                return (
+                    <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-xl overflow-hidden shadow-sm border border-slate-100 flex-shrink-0">
+                            {u.avatar ? (
+                                <img src={u.avatar} alt={u.nombre} className="w-full h-full object-cover" />
+                            ) : (
+                                <div className="w-full h-full bg-gradient-to-br from-primary/80 to-blue-700 flex items-center justify-center text-white text-xs font-bold">
+                                    {initials}
+                                </div>
+                            )}
+                        </div>
+                        <div>
+                            <h3 className="text-sm font-bold text-primary-dark">{u.nombre}</h3>
+                            <p className="text-[11px] text-slate-500">{u.correo}</p>
+                        </div>
                     </div>
-                    <div>
-                        <h3 className="text-sm font-bold text-primary-dark">{u.nombre}</h3>
-                        <p className="text-[11px] text-slate-500">{u.correo}</p>
-                    </div>
-                </div>
-            )
+                );
+            }
         },
         { header: 'PNF', key: 'pnf', className: 'text-sm text-slate-600 font-medium' },
         { 
@@ -111,10 +122,11 @@ export function UsersView() {
                 {isRegistering ? (
                     <div className="mt-8">
                         <UserRegisterForm 
+                            onSubmitUser={registerNewUser}
                             onCancel={() => setIsRegistering(false)} 
                             onSuccess={() => {
                                 setIsRegistering(false);
-                                alert('Usuario registrado con éxito (Simulación)');
+                                fetchUsers();
                             }} 
                         />
                     </div>
@@ -123,11 +135,21 @@ export function UsersView() {
                         <UserStatsOverview />
                         <div className="space-y-6">
                             <TableFilters filters={filterConfig} onClear={handleClearFilters} />
-                            <DataTable 
-                                columns={columns} 
-                                data={filteredUsers} 
-                                emptyMessage="No se encontraron usuarios con esos filtros."
-                            />
+                            {error && (
+                                <div className="p-4 bg-red-50 text-red-600 rounded-xl border border-red-200">
+                                    <p className="font-semibold text-sm">{error}</p>
+                                    <p className="text-xs mt-1 text-red-500">Nota: El Gateway posiblemente aún no exponga el listado de usuarios.</p>
+                                </div>
+                            )}
+                            {isLoading ? (
+                                <div className="flex justify-center p-10 font-medium text-slate-500 text-sm">Cargando usuarios desde el Gateway...</div>
+                            ) : (
+                                <DataTable 
+                                    columns={columns} 
+                                    data={filteredUsers} 
+                                    emptyMessage="No se encontraron usuarios o el servidor devolvió una lista vacía."
+                                />
+                            )}
                         </div>
                     </>
                 )}

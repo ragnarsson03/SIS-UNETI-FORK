@@ -2,18 +2,16 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { userRegisterSchema, type UserRegisterFormData, TIPO_INGRESO, CATEGORIA_ACADEMICA, DEDICACION } from '../model/userSchema';
-import { registerUserByRole } from '../api/registerUser';
-import { useAuth } from '@/context/AuthContext';
 
 interface UserRegisterFormProps {
+  onSubmitUser: (data: UserRegisterFormData) => Promise<void>;
   onSuccess?: () => void;
   onCancel?: () => void;
 }
 
-export function UserRegisterForm({ onSuccess, onCancel }: UserRegisterFormProps) {
+export function UserRegisterForm({ onSubmitUser, onSuccess, onCancel }: UserRegisterFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
-  const { user } = useAuth();
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm<UserRegisterFormData>({
     resolver: zodResolver(userRegisterSchema),
@@ -30,22 +28,12 @@ export function UserRegisterForm({ onSuccess, onCancel }: UserRegisterFormProps)
     setIsLoading(true);
     setServerError(null);
 
-    // Mapeo temporal si es necesario, de telefono a telefono_principal
-    const payload = { ...data };
-    if ((payload as any).telefono) {
-      (payload as any).telefono_principal = (payload as any).telefono;
-    }
-
     try {
-      if (!user?.token) {
-        throw new Error('Sesión no detectada. Por seguridad, reingresa al Portal SIS-UNETI.');
-      }
-      await registerUserByRole(payload, user.token);
+      await onSubmitUser(data);
+      alert('¡Usuario guardado con éxito!'); // Feedback de éxito UI
       if (onSuccess) onSuccess();
-      alert('¡Usuario guardado con éxito!'); // Opcional feedback de éxito
     } catch (error: any) {
-      const backendMsg = error.response?.data?.message || error.message;
-      setServerError(Array.isArray(backendMsg) ? backendMsg.join(', ') : backendMsg || 'Error al conectar con servidor.');
+      setServerError(error.message || 'Error al conectar con servidor.');
     } finally {
       setIsLoading(false);
     }
