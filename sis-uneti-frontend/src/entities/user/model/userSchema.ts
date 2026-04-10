@@ -32,15 +32,25 @@ const docenteSchema = baseSchema.extend({
   dedicacion: z.enum(DEDICACION, { error: 'Requerida' }),
 });
 
-// ---- Schema coordinador / secretario (solo base) ----
-const adminRolSchema = baseSchema.extend({
-  rol: z.enum(['coordinador', 'secretario']),
+// ---- Schema coordinador (puede llevar pnfId opcional) ----
+const coordinadorSchema = baseSchema.extend({
+  rol: z.literal('coordinador'),
+  pnfId: z.preprocess(
+    (val) => (val === "" || val === null ? undefined : val),
+    z.string().uuid("Debe ser un UUID válido").nullable().optional()
+  ),
+});
+
+// ---- Schema secretario (solo base) ----
+const secretarioSchema = baseSchema.extend({
+  rol: z.literal('secretario'),
 });
 
 export const userRegisterSchema = z.discriminatedUnion('rol', [
   estudianteSchema,
   docenteSchema,
-  adminRolSchema,
+  coordinadorSchema,
+  secretarioSchema,
 ]);
 
 export type UserRegisterFormData = z.infer<typeof userRegisterSchema>;

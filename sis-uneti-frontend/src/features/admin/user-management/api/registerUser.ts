@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { UserRegisterFormData } from '../model/userSchema';
+import { UserRegisterFormData } from '@/entities/user/model/userSchema';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
@@ -12,7 +12,7 @@ export const registerUserByRole = async (
   data: UserRegisterFormData,
   token: string
 ): Promise<any> => {
-  const payload = {
+  const payload: Record<string, any> = {
     ...data,
     rol: data.rol.toUpperCase(),
   };
