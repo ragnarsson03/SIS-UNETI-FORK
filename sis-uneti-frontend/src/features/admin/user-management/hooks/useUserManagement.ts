@@ -3,7 +3,7 @@ import { UserData } from '@/types/user.types';
 import { TableFilterConfig } from '@/components/tables/TableFilters';
 import { getUsersFromApi } from '../api/getUsers';
 import { registerUserByRole } from '../api/registerUser';
-import { UserRegisterFormData } from '../model/userSchema';
+import { UserRegisterFormData } from '@/entities/user/model/userSchema';
 import { useAuth } from '@/context/AuthContext';
 
 export function useUserManagement() {

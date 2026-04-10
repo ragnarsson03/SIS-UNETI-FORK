@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { userRegisterSchema, type UserRegisterFormData, TIPO_INGRESO, CATEGORIA_ACADEMICA, DEDICACION } from '../model/userSchema';
+import { userRegisterSchema, type UserRegisterFormData, TIPO_INGRESO, CATEGORIA_ACADEMICA, DEDICACION } from '@/entities/user/model/userSchema';
 
 interface UserRegisterFormProps {
   onSubmitUser: (data: UserRegisterFormData) => Promise<void>;
@@ -14,7 +14,7 @@ export function UserRegisterForm({ onSubmitUser, onSuccess, onCancel }: UserRegi
   const [serverError, setServerError] = useState<string | null>(null);
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm<UserRegisterFormData>({
-    resolver: zodResolver(userRegisterSchema),
+    resolver: zodResolver(userRegisterSchema) as any,
     mode: 'onTouched',
     reValidateMode: 'onSubmit',
     defaultValues: {
@@ -30,10 +30,20 @@ export function UserRegisterForm({ onSubmitUser, onSuccess, onCancel }: UserRegi
 
     try {
       await onSubmitUser(data);
-      alert('¡Usuario guardado con éxito!'); // Feedback de éxito UI
+      alert('¡Usuario guardado con éxito!');
       if (onSuccess) onSuccess();
     } catch (error: any) {
-      setServerError(error.message || 'Error al conectar con servidor.');
+      // Manejo explícito del 409 Conflict (cédula/email duplicado)
+      const status = error?.response?.status;
+      const mensaje = error?.response?.data?.message || error.message || 'Error al conectar con servidor.';
+      if (status === 409) {
+        setServerError(`Conflicto: ${Array.isArray(mensaje) ? mensaje.join(' · ') : mensaje}`);
+      } else if (status === 400) {
+        const msgs = Array.isArray(mensaje) ? mensaje.join(' · ') : mensaje;
+        setServerError(`Datos inválidos: ${msgs}`);
+      } else {
+        setServerError(Array.isArray(mensaje) ? mensaje.join(' · ') : mensaje);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -190,6 +200,22 @@ export function UserRegisterForm({ onSubmitUser, onSuccess, onCancel }: UserRegi
               </div>
             </>
           )}
+          {rol === 'coordinador' && (
+            <div className="md:col-span-2">
+              <label className="block text-sm font-semibold text-slate-700 mb-1">
+                PNF que Coordina <span className="text-slate-400 font-normal">(opcional)</span>
+              </label>
+              <select
+                {...register('pnfId' as any)}
+                className="w-full p-2.5 bg-white border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+              >
+                <option value="">— Sin asignar —</option>
+                <option value="f98195e8-b822-44d5-9566-27cfc5612bd2">PNF en Informática</option>
+                <option value="a76295e8-b822-44d5-9566-27cfc5612bd9">PNF en Telecomunicaciones</option>
+              </select>
+            </div>
+          )}
+
         </div>
 
         {/* Botones de acción */}

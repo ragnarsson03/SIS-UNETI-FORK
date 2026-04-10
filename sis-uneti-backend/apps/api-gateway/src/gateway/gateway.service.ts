@@ -1,4 +1,4 @@
-import { Injectable, Logger, Inject } from '@nestjs/common';
+import { Injectable, Logger, Inject, HttpException, HttpStatus } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 
@@ -20,9 +20,22 @@ export class GatewayService {
     try {
       const response = await lastValueFrom(this.adminClient.send(pattern, data));
       return response;
-    } catch (error) {
-      this.logger.error(`❌ Error en comando ${pattern}: ${error}`);
-      throw error;
+    } catch (error: any) {
+      this.logger.error(`❌ Error en comando ${pattern}:`, error);
+      
+      // Si el microservicio envió un HttpException serializado (status + message)
+      if (error && error.status) {
+        throw new HttpException(
+          error.response || error.message || 'Error en el microservicio', 
+          error.status
+        );
+      }
+      
+      // Si es un error desconocido
+      throw new HttpException(
+        'Error interno en la comunicación de microservicios',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
     }
   }
 }
