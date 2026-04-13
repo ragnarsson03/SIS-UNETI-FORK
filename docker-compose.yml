@@ -5,10 +5,12 @@ services:
       context: .
       dockerfile_inline: |
         FROM postgres:18-alpine
-        # Schema modular: scripts numerados ejecutados en orden por Postgres
+        # Aseguramos que los scripts de infraestructura corran PRIMERO (00, 01...)
         COPY database/init-scripts/ /docker-entrypoint-initdb.d/
-        # Seeders modulares: solo añade archivos a database/seeders/ para extender
+        # Luego los seeders (asegúrate de que empiecen por un número mayor, ej. 02_usuarios.sql)
         COPY database/seeders/ /docker-entrypoint-initdb.d/
+
+        
     container_name: sis_uneti_db
     environment:
       POSTGRES_DB: data_soberana

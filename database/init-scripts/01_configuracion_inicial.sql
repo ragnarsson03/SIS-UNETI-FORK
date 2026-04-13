@@ -11,6 +11,8 @@
 --  TEMPLATE = template0
 --  CONNECTION LIMIT = -1;
 
--- Conectarse a la base de datos
--- \c data_soberana;
-
+-- Conectarse a la base de datos destino primero
+\c data_soberana;
+
+-- Ahora sí, crear la extensión dentro de esta DB
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
