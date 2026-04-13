@@ -1,0 +1,34 @@
+name: SIS-UNETI Quality Gate
+
+on:
+  pull_request:
+    branches: [ develop, main ]
+
+jobs:
+  lint-backend:
+    name: Lint Backend (NestJS)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install & Lint
+        run: |
+          cd sis-uneti-backend
+          npm install
+          npm run lint # O el comando que uses para testear
+
+  lint-frontend:
+    name: Lint Frontend (React/Angular)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install & Lint
+        run: |
+          cd sis-uneti-frontend
+          npm install
+          npm run lint
