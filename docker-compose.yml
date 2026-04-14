@@ -5,10 +5,12 @@ services:
       context: .
       dockerfile_inline: |
         FROM postgres:18-alpine
-        # Aseguramos que los scripts de infraestructura corran PRIMERO (00, 01...)
-        COPY database/init-scripts/ /docker-entrypoint-initdb.d/
-        # Luego los seeders (asegúrate de que empiecen por un número mayor, ej. 02_usuarios.sql)
-        COPY database/seeders/ /docker-entrypoint-initdb.d/
+        # El orquestador va a la raíz de inicialización para ser ejecutado por Postgres
+        COPY database/init.sh /docker-entrypoint-initdb.d/init.sh
+        # Las carpetas se copian pero Postgres no las ejecutará automáticamente
+        # porque no están en la raíz de /docker-entrypoint-initdb.d/
+        COPY database/schema/ /docker-entrypoint-initdb.d/schema/
+        COPY database/seeders/ /docker-entrypoint-initdb.d/seeders/
 
         
     container_name: sis_uneti_db
