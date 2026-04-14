@@ -5,10 +5,14 @@ services:
       context: .
       dockerfile_inline: |
         FROM postgres:18-alpine
-        # Schema principal (estructura de tablas)
-        COPY database/data_soberana.sql /docker-entrypoint-initdb.d/01_soberana.sql
-        # Seeders modulares: solo añade archivos a database/seeders/ para extender
-        COPY database/seeders/ /docker-entrypoint-initdb.d/
+        # El orquestador va a la raíz de inicialización para ser ejecutado por Postgres
+        COPY database/init.sh /docker-entrypoint-initdb.d/init.sh
+        # Las carpetas se copian pero Postgres no las ejecutará automáticamente
+        # porque no están en la raíz de /docker-entrypoint-initdb.d/
+        COPY database/schema/ /docker-entrypoint-initdb.d/schema/
+        COPY database/seeders/ /docker-entrypoint-initdb.d/seeders/
+
+        
     container_name: sis_uneti_db
     environment:
       POSTGRES_DB: data_soberana
