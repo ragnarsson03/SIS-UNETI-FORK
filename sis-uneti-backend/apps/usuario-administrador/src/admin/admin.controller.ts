@@ -13,7 +13,7 @@ export class AdminController {
   constructor(
     private readonly adminService: AdminService,
     private readonly academicoService: AcademicoService,
-  ) {}
+  ) { }
 
   // ============================
   // COORDINADOR
@@ -82,5 +82,13 @@ export class AdminController {
   @MessagePattern('academico.listar-cohortes')
   async listarCohortesMq() {
     return this.academicoService.listarCohortes();
+  }
+
+  // ============================
+  // LISTADO DE USUARIOS
+  // ============================
+  @MessagePattern('admin.listar-usuarios')
+  async listarUsuariosMq() {
+    return this.adminService.findAllUsers();
   }
 }

@@ -15,7 +15,7 @@ BEGIN
 -- ─────────────────────────────────────────────
 -- 1. INSERTAR USUARIOS DE PRUEBA (si no existen)
 -- ─────────────────────────────────────────────
-INSERT INTO seguridad.usuarios (cedula, email, nombres, apellidos, password_hash, salt, activo, estado_usuario)
+INSERT INTO seguridad.usuarios (cedula, correo_principal, nombres, apellidos, password_hash, salt, activo, estado_usuario)
 VALUES
     ('V11111111', 'admin@uneti.edu.ve',          'Usuario',       'Administrador', v_hash, v_salt, true, 'ACTIVO'),
     ('V22222222', 'estudiante@uneti.edu.ve',      'Estudiante',    'Demo',          v_hash, v_salt, true, 'ACTIVO'),

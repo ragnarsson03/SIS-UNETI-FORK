@@ -53,6 +53,13 @@ async crearDocente(@Body() dto: CrearDocenteDto) {
 async crearEstudiante(@Body() dto: CrearEstudianteDto) {
     return this.gatewayService.enviarComando('admin.crear-estudiante', dto);
 }
+
+@Get()
+@Rol(Roles.ADMINISTRADOR)
+@ApiOperation({ summary: 'Listar todos los usuarios del sistema (vía Gateway → Redis → Admin MS)' })
+async listarUsuarios() {
+    return this.gatewayService.enviarComando('admin.listar-usuarios', {});
+}
 }
 
 // ─────────────────────────────────────────────────────
