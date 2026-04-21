@@ -46,4 +46,4 @@ FROM academico.inscripciones i
 JOIN academico.unidades_curriculares uc ON i.uc_id = uc.id
 JOIN academico.periodos_academicos p ON i.periodo_id = p.id;
 COMMENT ON VIEW academico.vista_historial_academico IS 'Historial académico consolidado de estudiantes';
-
+

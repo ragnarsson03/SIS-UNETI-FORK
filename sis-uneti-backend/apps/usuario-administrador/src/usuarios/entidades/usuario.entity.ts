@@ -8,7 +8,7 @@ id!: string;
 @Column({ unique: true, length: 20 })
 cedula!: string;
 
-@Column({ type: 'citext', unique: true })
+@Column({ name: 'correo_principal', type: 'citext', unique: true })
 email!: string;
 
 @Column({ name: 'password_hash', length: 255 })
@@ -38,9 +38,25 @@ estado_usuario!: string;
 @Column({ name: 'intentos_fallidos', default: 0 })
 intentos_fallidos!: number;
 
-@CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
-created_at!: Date;
+@CreateDateColumn({ name: 'creado', type: 'timestamptz' })
+  creado!: Date;
 
-@UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
-updated_at!: Date;
+  @UpdateDateColumn({ name: 'actualizado', type: 'timestamptz' })
+  actualizado!: Date;
+
+@Column({
+    type: 'enum',
+    enum: [
+      'ESTUDIANTES',
+      'DOCENTES',
+      'ANALISTA',
+      'COORDINADOR_CARRERA',
+      'COORDINADOR_CE',
+      'ADMINISTRADOR',
+      'AUDITOR',
+    ],
+    default: 'ESTUDIANTES',
+    name: 'rol_usuario',
+  })
+  rol!: string;
 }

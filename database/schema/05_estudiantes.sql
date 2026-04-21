@@ -160,4 +160,4 @@ CREATE INDEX idx_asistencia_sesion ON academico.registro_asistencia(sesion_id);
 CREATE INDEX idx_moodle_sync_estado ON academico.moodle_sync_jobs(estado);
 CREATE INDEX idx_eval_moodle_seccion ON academico.evaluaciones_moodle(seccion_id);
 CREATE INDEX idx_eval_moodle_estudiante ON academico.evaluaciones_moodle(estudiante_id);
-
+

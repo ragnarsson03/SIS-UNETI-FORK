@@ -159,4 +159,4 @@ CREATE TABLE academico.secciones (
 );
 COMMENT ON TABLE academico.secciones IS 'Secciones/grupos de cada unidad curricular';
 
-
+

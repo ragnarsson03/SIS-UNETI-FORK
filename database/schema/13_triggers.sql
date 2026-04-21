@@ -96,4 +96,4 @@ CREATE TRIGGER trg_tramites_updated_at
     BEFORE UPDATE ON secretaria.tramites
     FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
 COMMENT ON TRIGGER trg_tramites_updated_at ON secretaria.tramites IS 'Actualiza timestamp de modificación';
-
+

@@ -222,4 +222,4 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 COMMENT ON FUNCTION secretaria.fn_generar_certificado_qr(UUID) IS 'Genera un certificado con código QR';
-
+

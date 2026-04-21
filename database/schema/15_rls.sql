@@ -31,4 +31,4 @@ CREATE POLICY estudiante_own_pagos ON finanzas.pagos_aranceles
         SELECT id FROM estudiantes.estudiantes 
         WHERE usuario_id = current_setting('app.usuario_id')::UUID
     ));
-
+

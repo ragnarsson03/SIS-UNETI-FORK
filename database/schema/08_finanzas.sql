@@ -50,4 +50,4 @@ CREATE INDEX idx_pagos_estudiante ON finanzas.pagos_aranceles(estudiante_id);
 CREATE INDEX idx_pagos_estado ON finanzas.pagos_aranceles(estado);
 CREATE INDEX idx_pagos_fecha ON finanzas.pagos_aranceles(fecha_pago DESC);
 CREATE INDEX idx_pagos_referencia ON finanzas.pagos_aranceles(referencia_externa);
-
+

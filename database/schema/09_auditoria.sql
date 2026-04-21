@@ -62,4 +62,4 @@ CREATE INDEX idx_auditoria_tabla ON auditoria.logs_auditoria(tabla_afectada, cre
 CREATE INDEX idx_auditoria_fecha ON auditoria.logs_auditoria(created_at DESC);
 CREATE INDEX idx_auditoria_registro ON auditoria.logs_auditoria(tabla_afectada, registro_id);
 CREATE INDEX idx_auditoria_json ON auditoria.logs_auditoria USING GIN (valor_nuevo);
-
+

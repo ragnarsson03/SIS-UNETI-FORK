@@ -11,8 +11,8 @@ CREATE TABLE seguridad.roles (
     nivel_jerarquico INT NOT NULL CHECK (nivel_jerarquico BETWEEN 1 AND 5),
     es_rol_sistema BOOLEAN DEFAULT true,
     permisos_default JSONB NOT NULL DEFAULT '{}',
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    creado TIMESTAMPTZ NOT NULL DEFAULT now(),
+    actualizado TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 COMMENT ON TABLE seguridad.roles IS 'Catálogo de roles del sistema para RBAC';
 
@@ -22,7 +22,7 @@ CREATE TABLE seguridad.permisos (
     codigo VARCHAR(80) UNIQUE NOT NULL,
     descripcion TEXT NOT NULL,
     modulo VARCHAR(50) NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    creado TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 COMMENT ON TABLE seguridad.permisos IS 'Permisos granulares del sistema';
 
@@ -30,7 +30,7 @@ COMMENT ON TABLE seguridad.permisos IS 'Permisos granulares del sistema';
 CREATE TABLE seguridad.usuarios (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     cedula VARCHAR(20) UNIQUE NOT NULL,
-    email CITEXT UNIQUE NOT NULL,
+    correo_principal CITEXT UNIQUE NOT NULL,
     email_alternativo CITEXT,
     password_hash VARCHAR(255) NOT NULL,
     salt VARCHAR(255) NOT NULL,
@@ -51,13 +51,13 @@ CREATE TABLE seguridad.usuarios (
     fecha_bloqueo TIMESTAMPTZ,
     debe_cambiar_password BOOLEAN DEFAULT false,
     fecha_expiracion_password TIMESTAMPTZ,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    creado TIMESTAMPTZ NOT NULL DEFAULT now(),
+    actualizado TIMESTAMPTZ NOT NULL DEFAULT now(),
     created_by UUID REFERENCES seguridad.usuarios(id),
     updated_by UUID REFERENCES seguridad.usuarios(id),
     hash_integridad VARCHAR(64) GENERATED ALWAYS AS (
         encode(digest(
-            cedula::text || email::text || nombres || apellidos || activo::text,
+            cedula::text || correo_principal::text || nombres || apellidos || activo::text,
             'sha256'
         ), 'hex')
     ) STORED
@@ -123,7 +123,7 @@ CREATE TABLE seguridad.auth_refresh_tokens (
     user_agent TEXT,
     revoked_at TIMESTAMPTZ,
     expires_at TIMESTAMPTZ NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    creado TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 COMMENT ON TABLE seguridad.auth_refresh_tokens IS 'Tokens de refresco para autenticación JWT';
 
@@ -138,14 +138,14 @@ CREATE TABLE seguridad.notificaciones (
     leida BOOLEAN NOT NULL DEFAULT false,
     fecha_lectura TIMESTAMPTZ,
     enviada_por UUID REFERENCES seguridad.usuarios(id),
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    creado TIMESTAMPTZ NOT NULL DEFAULT now(),
     fecha_expiracion TIMESTAMPTZ
 );
 COMMENT ON TABLE seguridad.notificaciones IS 'Notificaciones del sistema para usuarios';
 
 -- Índices de seguridad
 CREATE INDEX idx_usuarios_cedula ON seguridad.usuarios(cedula);
-CREATE INDEX idx_usuarios_email ON seguridad.usuarios(email);
+CREATE INDEX idx_usuarios_email ON seguridad.usuarios(correo_principal);
 CREATE INDEX idx_usuarios_activo ON seguridad.usuarios(activo) WHERE activo = true;
 CREATE INDEX idx_usuarios_estado ON seguridad.usuarios(estado_usuario);
 CREATE INDEX idx_sesiones_usuario ON seguridad.sesiones(usuario_id, estado);
@@ -153,5 +153,5 @@ CREATE INDEX idx_sesiones_token ON seguridad.sesiones(token_hash);
 CREATE INDEX idx_sesiones_expiracion ON seguridad.sesiones(fecha_expiracion) WHERE estado = 'ACTIVA';
 CREATE INDEX idx_intentos_ip_fecha ON seguridad.intentos_autenticacion(ip_address, fecha_intento DESC);
 CREATE INDEX idx_intentos_cedula ON seguridad.intentos_autenticacion(cedula_intentada);
-CREATE INDEX idx_notificaciones_usuario ON seguridad.notificaciones(usuario_id, leida, created_at DESC);
-
+CREATE INDEX idx_notificaciones_usuario ON seguridad.notificaciones(usuario_id, leida, creado DESC);
+

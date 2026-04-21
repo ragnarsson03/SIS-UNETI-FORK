@@ -39,4 +39,4 @@ CREATE TABLE docentes.asignaciones_docentes (
     UNIQUE(seccion_id, docente_id, fecha_revocacion)
 );
 COMMENT ON TABLE docentes.asignaciones_docentes IS 'Asignación de docentes a secciones';
-
+

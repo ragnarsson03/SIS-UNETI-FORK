@@ -195,4 +195,4 @@ CREATE INDEX idx_tramites_estado ON secretaria.tramites(estado);
 CREATE INDEX idx_tramites_asignado ON secretaria.tramites(asignado_a) WHERE asignado_a IS NOT NULL;
 CREATE INDEX idx_qr_verificaciones_token ON secretaria.qr_verificaciones(qr_token);
 CREATE INDEX idx_certificados_qr ON secretaria.certificados_emitidos(codigo_qr_uuid);
-
+

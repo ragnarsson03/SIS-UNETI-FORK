@@ -97,4 +97,4 @@ CREATE TABLE configuracion.becas_tipos (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 COMMENT ON TABLE configuracion.becas_tipos IS 'Tipos de becas disponibles';
-
+

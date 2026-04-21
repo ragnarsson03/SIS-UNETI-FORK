@@ -84,4 +84,4 @@ CREATE TABLE historico.estados_academicos (
     motivo TEXT
 );
 COMMENT ON TABLE historico.estados_academicos IS 'Historial de cambios de estado académico';
-
+
